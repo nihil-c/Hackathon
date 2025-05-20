@@ -83,7 +83,7 @@ public class Controller {
                 newUser = new Organizer(currentUser.getUsername(), currentUser.getEmail(), currentUser.getPassword());
                 break;
             case "participant":
-                // newUser = new Participant(currentUser.getUsername(), currentUser.getEmail());
+                newUser = new Participant(currentUser.getUsername(), currentUser.getEmail(), currentUser.getPassword());
                 break;
             case "judge":
                 // newUser = new Judge(currentUser.getUsername(), currentUser.getEmail());
@@ -102,7 +102,12 @@ public class Controller {
         }
     }
 
-public void addHackathon(Hackathon hackathon) {
+    public void addHackathon(Hackathon hackathon) {
         hackathons.add(hackathon);
     }
+
+    public void registerParticipantToHackathon(Participant participant, Hackathon hackathon) throws Exception {
+        hackathon.addParticipant(participant);
+    }
+
 }

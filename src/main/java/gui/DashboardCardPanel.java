@@ -1,6 +1,7 @@
 package gui;
 
 import controller.*;
+import exceptions.*;
 import model.*;
 import utils.*;
 
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 
 public class DashboardCardPanel {
     private JPanel rootPanel;
-    private JPanel dashboardPanel;
     private JLabel dashboardLabel;
     private JLabel welcomeLabel;
     private JPanel roundedAddPanel;
@@ -23,7 +23,7 @@ public class DashboardCardPanel {
 
     private final Controller controller;
 
-    public DashboardCardPanel(Controller controller) {
+    public DashboardCardPanel(Controller controller, MainFrame parent) {
         this.controller = controller;
 
         setupScrollPanel();
@@ -48,12 +48,7 @@ public class DashboardCardPanel {
             infoLabel.setVisible(false);
 
             for (Hackathon hackathon : controller.getHackathons()) {
-                RoundedPanel card = createEventCard(
-                        hackathon.getTitle(),
-                        hackathon.getStartDate(),
-                        hackathon.getEndDate(),
-                        hackathon.getOrganizer().getUsername()
-                );
+                RoundedPanel card = createEventCard(hackathon);
 
                 eventListPanel.add(card, 0);
                 eventListPanel.add(Box.createVerticalStrut(15), 1);
@@ -61,16 +56,16 @@ public class DashboardCardPanel {
         }
     }
 
-    private RoundedPanel createEventCard(String name, LocalDate startDate, LocalDate endDate, String organizer) {
+    private RoundedPanel createEventCard(Hackathon hackathon) {
         RoundedPanel card = new RoundedPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel titleLabel = new JLabel(name);
-        JLabel startDateLabel = new JLabel("Start Date: " + startDate);
-        JLabel endDateLabel = new JLabel("End Date: " + endDate);
-        JLabel orgLabel = new JLabel("Organizer: " + organizer);
+        JLabel titleLabel = new JLabel(hackathon.getTitle());
+        JLabel startDateLabel = new JLabel("Start Date: " + hackathon.getStartDate());
+        JLabel endDateLabel = new JLabel("End Date: " + hackathon.getEndDate());
+        JLabel organizerLabel = new JLabel("Organizer: " + hackathon.getOrganizer().getUsername());
 
         titleLabel.setForeground(UIColors.CARMINE_RED);
         titleLabel.setFont(new Font(null, Font.BOLD, 14));
@@ -79,9 +74,62 @@ public class DashboardCardPanel {
         card.add(Box.createVerticalStrut(5));
         card.add(startDateLabel);
         card.add(endDateLabel);
-        card.add(orgLabel);
+        card.add(organizerLabel);
+
+        makeCardInteractive(card, hackathon);
 
         return card;
+    }
+
+    private void makeCardInteractive(RoundedPanel card, Hackathon hackathon) {
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Do you want to register to this hackathon?",
+                        "Register",
+                        JOptionPane.OK_CANCEL_OPTION
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+
+                    // Solo un user può partecipare ad un hackacthon infatti alla fine di quest'ultimo tutti i ruoli vengono azzerati ad user
+                    if (controller.getCurrentUser().getRole().equals("USER")) {
+                        try {
+                            controller.changeUserRole("participant");
+                            controller.registerParticipantToHackathon((Participant) controller.getCurrentUser(), hackathon);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "You cannot register to the event.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                card.setBackground(UIColors.LIGHT_GRAY);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.setCursor(Cursor.getDefaultCursor());
+                card.setBackground(Color.WHITE);
+            }
+        });
     }
 
     private void customizeComponents() {
@@ -114,7 +162,7 @@ public class DashboardCardPanel {
             }
 
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 JTextField titleField = new JTextField();
                 JTextField startDateField = new JTextField("YYYY-MM-DD");
                 JTextField endDateField = new JTextField("YYYY-MM-DD");

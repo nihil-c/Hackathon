@@ -30,10 +30,6 @@ public class AuthFrame extends JFrame {
         setupStyle();
     }
 
-    public JPanel getRootPanel() {
-        return rootPanel;
-    }
-
     public void setupCardPanel() {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
@@ -54,5 +50,9 @@ public class AuthFrame extends JFrame {
         sidePanel.setBackground(NIGHT_BLUE);
         hackathonIoPanel.setBackground(NIGHT_BLUE);
         hackathonIoLabel.setForeground(Color.WHITE);
+    }
+
+    public JPanel getRootPanel() {
+        return rootPanel;
     }
 }

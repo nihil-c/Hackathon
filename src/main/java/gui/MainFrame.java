@@ -20,7 +20,6 @@ public class MainFrame extends JFrame {
     private JLabel teamLabel;
     private JPanel roundedLogoutPanel;
     private JLabel logoutLabel;
-    private JLabel roleLabel;
     private JLabel menuLabel;
     private JPanel menuPanel;
     private JPanel roundedManagePanel;
@@ -47,7 +46,7 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
 
-        cardPanel.add(new DashboardCardPanel(controller).getRootPanel(), "dashboard");
+        cardPanel.add(new DashboardCardPanel(controller, this).getRootPanel(), "dashboard");
         // cardPanel.add(new HackathonCardPanel(controller).getRootPanel(), "hackathon");
         // cardPanel.add(new TeamCardPanel(controller).getRootPanel(), "team");
         // cardPanel.add(new ManageCardPanel(controller).getRootPanel(), "manage");
@@ -65,8 +64,6 @@ public class MainFrame extends JFrame {
         teamLabel.setForeground(Color.WHITE);
         manageLabel.setForeground(Color.WHITE);
         logoutLabel.setForeground(Color.WHITE);
-        roleLabel.setText("You are currently logged in as: " + controller.getCurrentUser().getRole());
-        roleLabel.setForeground(Color.GRAY);
     }
 
     private void createUIComponents() {
