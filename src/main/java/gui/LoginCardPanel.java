@@ -88,14 +88,12 @@ public class LoginCardPanel {
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
                 if (frame != null) frame.dispose();
             });
-        } catch (EmptyFieldException e) {
-            showErrorDialog("Fields must not be empty.");
-        } catch (UserNotFoundException e) {
+        } catch(EmptyFieldException ex) {
+            showErrorDialog("You must fill all the available fields.");
+        } catch (UserNotFoundException ex) {
             showErrorDialog("User not found.");
-        } catch (IncorrectPasswordException e) {
+        } catch (IncorrectPasswordException ex) {
             showErrorDialog("Password is not correct.");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 

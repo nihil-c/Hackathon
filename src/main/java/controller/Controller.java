@@ -1,8 +1,6 @@
 package controller;
 
-import exceptions.EmailAlreadyInUseException;
-import exceptions.EmptyFieldException;
-import exceptions.UsernameAlreadyTakenException;
+import exceptions.*;
 import model.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,18 +32,24 @@ public class Controller {
         users.add(new User(username, email, password));
     }
 
-    public void loginUser(String username, String password) throws Exception {
+    public void loginUser(String username, String password)
+            throws EmptyFieldException, IncorrectPasswordException, UserNotFoundException {
+
+        if (username.isEmpty() || password.isEmpty()) {
+            throw new EmptyFieldException();
+        }
+
         for (User user : users) {
             if (user.getUsername().equalsIgnoreCase(username)) {
                 if (user.getPassword().equals(password)) {
                     this.currentUser = user;
                     return;
                 } else {
-                    throw new Exception("Incorrect password.");
+                    throw new IncorrectPasswordException();
                 }
             }
         }
-        throw new Exception("User not found.");
+        throw new UserNotFoundException();
     }
 
     public void logoutUser() {

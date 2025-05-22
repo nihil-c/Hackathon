@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.ParticipantRole;
 import model.User;
 import utils.*;
 
@@ -166,7 +167,14 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "team");
+                User currentUser = controller.getCurrentUser();
+
+                if (currentUser.getRoleInstance() instanceof ParticipantRole) {
+                    // Ricarica da zero il pannello "team"
+                    refreshCard("team", new TeamCardPanel(controller).getRootPanel());
+                } else {
+                    JOptionPane.showMessageDialog(null, "This panel is reserved for hackathon participants.");
+                }
             }
         });
     }

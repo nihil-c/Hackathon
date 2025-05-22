@@ -68,6 +68,7 @@ public class RegistrationCardPanel {
             @Override
             public void mouseEntered(MouseEvent e) {
                 roundedBackPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                roundedBackPanel.setBackground(UIColors.PRESSED_CARMINE_RED);
             }
 
             @Override
@@ -79,6 +80,7 @@ public class RegistrationCardPanel {
             @Override
             public void mouseExited(MouseEvent e) {
                 roundedBackPanel.setCursor(Cursor.getDefaultCursor());
+                roundedBackPanel.setBackground(UIColors.CARMINE_RED);
             }
         });
     }
