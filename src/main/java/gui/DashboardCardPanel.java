@@ -1,11 +1,10 @@
 package gui;
 
 import controller.Controller;
+import exceptions.AlreadyOrganizingAnotherEventException;
 import exceptions.AlreadyRegisteredToHackathonException;
-import exceptions.InvalidRoleException;
+import exceptions.OrganizerSelfRegistrationException;
 import model.Hackathon;
-import model.OrganizerRole;
-import model.ParticipantRole;
 import model.Role;
 import model.User;
 import utils.RoundedPanel;
@@ -112,7 +111,14 @@ public class DashboardCardPanel {
                         controller.assignRoleToCurrentUser("participant");
                         currentUser.setRegisteredHackathon(hackathon);
                         JOptionPane.showMessageDialog(null, "Successfully registered!");
-                    } catch (InvalidRoleException ex) {
+                    } catch (AlreadyOrganizingAnotherEventException ex) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "You are already organizing another event.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    } catch (OrganizerSelfRegistrationException ex) {
                         JOptionPane.showMessageDialog(
                                 null,
                                 "You cannot register to an event you created.",
@@ -175,70 +181,81 @@ public class DashboardCardPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                JTextField titleField = new JTextField();
-                JTextField locationField = new JTextField();
-                JTextField startDateField = new JTextField(LocalDate.now().toString());
-                JTextField endDateField = new JTextField(LocalDate.now().toString());
+                Role currentUserRole = controller.getCurrentUser().getRoleInstance();
 
-                Dimension maxSize = new Dimension(Integer.MAX_VALUE, 30);
-                titleField.setMaximumSize(maxSize);
-                locationField.setMaximumSize(maxSize);
-                startDateField.setMaximumSize(maxSize);
-                endDateField.setMaximumSize(maxSize);
+                if (currentUserRole == null) {
+                    JTextField titleField = new JTextField();
+                    JTextField locationField = new JTextField();
+                    JTextField startDateField = new JTextField(LocalDate.now().toString());
+                    JTextField endDateField = new JTextField(LocalDate.now().toString());
 
-                JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                    Dimension maxSize = new Dimension(Integer.MAX_VALUE, 30);
+                    titleField.setMaximumSize(maxSize);
+                    locationField.setMaximumSize(maxSize);
+                    startDateField.setMaximumSize(maxSize);
+                    endDateField.setMaximumSize(maxSize);
 
-                panel.add(new JLabel("Title:")).setForeground(Color.GRAY);
-                panel.add(titleField);
-                panel.add(Box.createVerticalStrut(10));
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-                panel.add(new JLabel("Location:")).setForeground(Color.GRAY);
-                panel.add(locationField);
-                panel.add(Box.createVerticalStrut(10));
+                    panel.add(new JLabel("Title:")).setForeground(Color.GRAY);
+                    panel.add(titleField);
+                    panel.add(Box.createVerticalStrut(10));
 
-                panel.add(new JLabel("Start Date (YYYY-MM-DD):")).setForeground(Color.GRAY);
-                panel.add(startDateField);
-                panel.add(Box.createVerticalStrut(10));
+                    panel.add(new JLabel("Location:")).setForeground(Color.GRAY);
+                    panel.add(locationField);
+                    panel.add(Box.createVerticalStrut(10));
 
-                panel.add(new JLabel("End Date (YYYY-MM-DD):")).setForeground(Color.GRAY);
-                panel.add(endDateField);
-                panel.add(Box.createVerticalStrut(10));
+                    panel.add(new JLabel("Start Date (YYYY-MM-DD):")).setForeground(Color.GRAY);
+                    panel.add(startDateField);
+                    panel.add(Box.createVerticalStrut(10));
 
-                panel.add(new JLabel("By pressing OK you will become the event Organizer.")).setForeground(UIColors.CARMINE_RED);
-                panel.add(new JLabel("Organizers cannot join or manage more than one event.")).setForeground(UIColors.CARMINE_RED);
+                    panel.add(new JLabel("End Date (YYYY-MM-DD):")).setForeground(Color.GRAY);
+                    panel.add(endDateField);
+                    panel.add(Box.createVerticalStrut(10));
 
-                int result = JOptionPane.showConfirmDialog(
-                        null,
-                        panel,
-                        "Add Hackathon",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE
-                );
+                    panel.add(new JLabel("By pressing OK you will become the event Organizer.")).setForeground(UIColors.CARMINE_RED);
+                    panel.add(new JLabel("Organizers cannot join or manage more than one event.")).setForeground(UIColors.CARMINE_RED);
 
-                if (result == JOptionPane.OK_OPTION) {
-                    try {
-                        User currentUser = controller.getCurrentUser();
-                        controller.assignRoleToCurrentUser("organizer");
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            panel,
+                            "Add Hackathon",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE
+                    );
 
-                        String title = titleField.getText();
-                        String location = locationField.getText();
-                        LocalDate startDate = LocalDate.parse(startDateField.getText());
-                        LocalDate endDate = LocalDate.parse(endDateField.getText());
+                    if (result == JOptionPane.OK_OPTION) {
+                        try {
+                            User currentUser = controller.getCurrentUser();
+                            controller.assignRoleToCurrentUser("organizer");
 
-                        Hackathon newHackathon = currentUser.createHackathon(title, location, startDate, endDate);
-                        currentUser.setRegisteredHackathon(newHackathon);
-                        controller.addHackathonToList(newHackathon);
+                            String title = titleField.getText();
+                            String location = locationField.getText();
+                            LocalDate startDate = LocalDate.parse(startDateField.getText());
+                            LocalDate endDate = LocalDate.parse(endDateField.getText());
 
-                        updateEventListPanel();
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(
-                                null,
-                                "Invalid input: " + ex.getMessage(),
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE
-                        );
+                            Hackathon newHackathon = currentUser.createHackathon(title, location, startDate, endDate);
+                            currentUser.setRegisteredHackathon(newHackathon);
+                            controller.addHackathonToList(newHackathon);
+
+                            updateEventListPanel();
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Invalid input: " + ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Cannot create a new event:\nyou're already participating in a hackathon.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });

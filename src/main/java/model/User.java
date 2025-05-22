@@ -1,9 +1,9 @@
 package model;
 
+import exceptions.AlreadyOrganizingAnotherEventException;
 import exceptions.AlreadyRegisteredToHackathonException;
-import exceptions.InvalidRoleException;
+import exceptions.OrganizerSelfRegistrationException;
 
-import javax.swing.*;
 import java.time.LocalDate;
 
 public class User {
@@ -72,9 +72,13 @@ public class User {
     /* Solo uno user che non si è mai registrato ad al più di un Hackathon oppure che non 
     lo ha mai organizzato oppure mai partecipato nelle vesti di giudice 
     può registrarsi ad un hackathon. Una volta iscritto diventa automaticamente un participant. */
-    public void registerToHackathon(Hackathon hackathon) throws InvalidRoleException, AlreadyRegisteredToHackathonException {
+    public void registerToHackathon(Hackathon hackathon)
+            throws OrganizerSelfRegistrationException, AlreadyRegisteredToHackathonException, AlreadyOrganizingAnotherEventException {
         if (this.role instanceof OrganizerRole) {
-            throw new InvalidRoleException();
+            if (this.registeredHackathon.equals(hackathon)) {
+                throw new OrganizerSelfRegistrationException();
+            }
+            throw new AlreadyOrganizingAnotherEventException();
         }
 
         try {
