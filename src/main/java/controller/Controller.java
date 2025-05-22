@@ -62,10 +62,6 @@ public class Controller {
         hackathons.add(h);
     }
 
-    public void registerToHackathon(Hackathon hackathon) throws Exception {
-        hackathon.addParticipant(currentUser);
-    }
-
     public User getCurrentUser() {
         return currentUser;
     }
