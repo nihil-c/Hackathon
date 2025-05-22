@@ -105,13 +105,10 @@ public class DashboardCardPanel {
 
                 if (result == JOptionPane.OK_OPTION) {
                     User currentUser = controller.getCurrentUser();
-                    Role role = currentUser.getRoleInstance();
-
                     try {
-                        if (!(role instanceof ParticipantRole)) {
-                            controller.assignRoleToCurrentUser("participant");
-                        }
-                        //controller.registerToHackathon(hackathon);
+                        currentUser.registerToHackathon(hackathon);
+                        controller.assignRoleToCurrentUser("participant");
+                        currentUser.setRegisteredHackathon(hackathon);
                         JOptionPane.showMessageDialog(null, "Successfully registered!");
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(

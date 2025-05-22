@@ -65,6 +65,7 @@ public class Controller {
     public User getCurrentUser() {
         return currentUser;
     }
+    
 
     public ArrayList<Hackathon> getHackathons() {
         return hackathons;

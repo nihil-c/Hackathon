@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.*;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -69,6 +70,8 @@ public class HackathonCardPanel {
         endDateLabel.setForeground(Color.GRAY);
         deadlineLabel.setForeground(Color.GRAY);
         organizerLabel.setForeground(Color.GRAY);
+        
+        addHackathonInfo();
 
         problemStatementLabel.setForeground(UIColors.CARMINE_RED);
         editLabel.setForeground(Color.WHITE);
@@ -81,6 +84,26 @@ public class HackathonCardPanel {
 
         problemStatementTextArea.setBackground(null);
         problemStatementTextArea.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur. Duis aute irure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    }
+    
+    private void addHackathonInfo() {
+        User currentUser = controller.getCurrentUser();
+        
+        if (currentUser.getRegisteredHackathon() != null) {
+            titleContentLabel.setText((currentUser.getRegisteredHackathon()).getTitle());
+            locationContentLabel.setText((currentUser.getRegisteredHackathon()).getLocation());
+            /* Una label accetta solo una stringa, mentre i metodi
+             * startDateContentLabel
+             * endDateContentLabel
+             * deadlineContentLabel
+             * restituiscono tutti oggetti LocalDate, quindi è opportuno isufruire del metodo:
+             * toString, per ottenere le informazioni presenti (date).
+             * */
+            startDateContentLabel.setText((currentUser.getRegisteredHackathon()).getStartDate().toString());
+            endDateContentLabel.setText((currentUser.getRegisteredHackathon()).getEndDate().toString());
+            deadlineContentLabel.setText((currentUser.getRegisteredHackathon()).getRegistrationDeadline().toString());
+            organizerContentLabel.setText((currentUser.getRegisteredHackathon()).getOrganizer().getUsername());
+        }
     }
 
     private void setupScrollPanel() {

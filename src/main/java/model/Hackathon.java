@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.AlreadyRegisteredToHackathonException;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -28,15 +30,12 @@ public class Hackathon {
         this.participants = new ArrayList<>();
     }
 
-    public void addParticipant(User user) throws Exception {
-        if (!(user.getRoleInstance() instanceof ParticipantRole)) {
-            throw new Exception("User is not a participant.");
+    public void addParticipant(User user) throws AlreadyRegisteredToHackathonException {
+        if (!participants.contains(user)) {
+            participants.add(user);
+        } else {
+            throw new AlreadyRegisteredToHackathonException();
         }
-        if (participants.contains(user)) {
-            throw new Exception("Already registered.");
-        }
-        participants.add(user);
-        ((ParticipantRole) user.getRoleInstance()).setHackathon(this);
     }
 
     public String getTitle() { return title; }

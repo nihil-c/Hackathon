@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainFrame extends JFrame {
     private JPanel rootPanel;
@@ -29,6 +31,9 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout;
     private final Controller controller;
 
+    // Mappa per gestire i pannelli (nome -> JPanel)
+    private final Map<String, JPanel> cardMap = new HashMap<>();
+
     public MainFrame(Controller controller) {
         this.controller = controller;
 
@@ -37,7 +42,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setContentPane(rootPanel);
         setLocationRelativeTo(null);
-        
+
         setupCardPanel();
         customizeComponents();
     }
@@ -46,10 +51,22 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
 
-        cardPanel.add(new DashboardCardPanel(controller).getRootPanel(), "dashboard");
-        cardPanel.add(new HackathonCardPanel(controller).getRootPanel(), "hackathon");
-        cardPanel.add(new TeamCardPanel(controller).getRootPanel(), "team");
-        // cardPanel.add(new ManageCardPanel(controller).getRootPanel(), "manage");
+        // Crea e registra i pannelli nella mappa
+        JPanel dashboardPanel = new DashboardCardPanel(controller).getRootPanel();
+        JPanel hackathonPanel = new HackathonCardPanel(controller).getRootPanel();
+        JPanel teamPanel = new TeamCardPanel(controller).getRootPanel();
+        // JPanel managePanel = new ManageCardPanel(controller).getRootPanel();
+
+        cardMap.put("dashboard", dashboardPanel);
+        cardMap.put("hackathon", hackathonPanel);
+        cardMap.put("team", teamPanel);
+        // cardMap.put("manage", managePanel);
+
+        // Aggiunge i pannelli al cardPanel con il nome chiave
+        cardPanel.add(dashboardPanel, "dashboard");
+        cardPanel.add(hackathonPanel, "hackathon");
+        cardPanel.add(teamPanel, "team");
+        // cardPanel.add(managePanel, "manage");
 
         cardLayout.show(cardPanel, "dashboard");
     }
@@ -119,7 +136,8 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "hackathon");
+                // Ricarica da zero il pannello "hackathon"
+                refreshCard("hackathon", new HackathonCardPanel(controller).getRootPanel());
             }
         });
     }
@@ -185,7 +203,7 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                // Open auth frame and close main frame
+                // Apri AuthFrame e chiudi MainFrame
                 SwingUtilities.invokeLater(() -> {
                     new AuthFrame(controller).setVisible(true);
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
@@ -193,6 +211,24 @@ public class MainFrame extends JFrame {
                 });
             }
         });
+    }
+
+    /**
+     * Metodo per ricaricare un pannello specifico, sostituendolo con uno nuovo.
+     *
+     * @param name Nome del pannello nella CardLayout
+     * @param newPanel Nuova istanza del JPanel da mostrare
+     */
+    private void refreshCard(String name, JPanel newPanel) {
+        JPanel oldPanel = cardMap.get(name);
+        if (oldPanel != null) {
+            cardPanel.remove(oldPanel);
+        }
+        cardMap.put(name, newPanel);
+        cardPanel.add(newPanel, name);
+        cardLayout.show(cardPanel, name);
+        cardPanel.revalidate();
+        cardPanel.repaint();
     }
 
     public JPanel getRootPanel() {

@@ -15,7 +15,7 @@ public class AlreadyRegisteredToHackathonException extends Exception {
      * </p>
      */
     public AlreadyRegisteredToHackathonException() {
-        super("Participant is already registered in another hackathon.");
+        super("Participant is already registered in a hackathon.");
     }
 
     /**
