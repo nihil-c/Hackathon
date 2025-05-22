@@ -63,6 +63,14 @@ public class HackathonCardPanel {
         hackathonLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(Color.GRAY);
 
+        User currentUser = controller.getCurrentUser();
+
+        if (currentUser.getRegisteredHackathon() == null) {
+            infoLabel.setText("You're currently not registered for an event.");
+        } else {
+            infoLabel.setText("You're currently registered to the event: " + currentUser.getRegisteredHackathon().getTitle());
+        }
+
         overviewLabel.setForeground(UIColors.CARMINE_RED);
         titleLabel.setForeground(Color.GRAY);
         locationLabel.setForeground(Color.GRAY);

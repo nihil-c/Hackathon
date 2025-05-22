@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.User;
 import utils.*;
 
 import javax.swing.*;
@@ -136,8 +137,14 @@ public class MainFrame extends JFrame {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                // Ricarica da zero il pannello "hackathon"
-                refreshCard("hackathon", new HackathonCardPanel(controller).getRootPanel());
+                User currentUser = controller.getCurrentUser();
+
+                if (!(currentUser.getRoleInstance() == null)) {
+                    // Ricarica da zero il pannello "hackathon"
+                    refreshCard("hackathon", new HackathonCardPanel(controller).getRootPanel());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please create or join an event to access this panel.");
+                }
             }
         });
     }
@@ -221,9 +228,11 @@ public class MainFrame extends JFrame {
      */
     private void refreshCard(String name, JPanel newPanel) {
         JPanel oldPanel = cardMap.get(name);
+
         if (oldPanel != null) {
             cardPanel.remove(oldPanel);
         }
+
         cardMap.put(name, newPanel);
         cardPanel.add(newPanel, name);
         cardLayout.show(cardPanel, name);

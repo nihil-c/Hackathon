@@ -137,8 +137,6 @@ public class RegistrationCardPanel {
             showErrorDialog("This username is already taken.");
         } catch (EmailAlreadyInUseException ex) {
             showErrorDialog("This email is already in use.");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 

@@ -1,5 +1,8 @@
 package controller;
 
+import exceptions.EmailAlreadyInUseException;
+import exceptions.EmptyFieldException;
+import exceptions.UsernameAlreadyTakenException;
 import model.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,13 +17,18 @@ public class Controller {
         this.hackathons = new ArrayList<>();
     }
 
-    public void registerUser(String username, String email, String password) throws Exception {
+    public void registerUser(String username, String email, String password)
+            throws EmptyFieldException, EmailAlreadyInUseException, UsernameAlreadyTakenException {
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            throw new Exception("Missing user information.");
+            throw new EmptyFieldException();
         }
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(username)) {
-                throw new Exception("Username already taken.");
+                throw new UsernameAlreadyTakenException();
+            }
+
+            if (u.getEmail().equalsIgnoreCase(email)) {
+                throw new EmailAlreadyInUseException();
             }
         }
         users.add(new User(username, email, password));
@@ -57,9 +65,8 @@ public class Controller {
         }
     }
 
-    public void createHackathon(String title, String location, LocalDate startDate, LocalDate endDate) throws Exception {
-        Hackathon h = new Hackathon(title, location, startDate, endDate, currentUser);
-        hackathons.add(h);
+    public void addHackathonToList(Hackathon hackathon) {
+        hackathons.add(hackathon);
     }
 
     public User getCurrentUser() {
