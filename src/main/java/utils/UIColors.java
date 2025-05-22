@@ -27,4 +27,6 @@ public class UIColors {
      * Grigio chiaro, ideale per sfondi neutri o hover effect.
      */
     public static final Color LIGHT_GRAY = new Color(230, 230, 230);
+
+    public static final Color HYPERLINK_BLUE = new Color(0, 102, 204);
 }

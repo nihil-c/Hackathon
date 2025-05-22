@@ -19,11 +19,9 @@ public class LoginCardPanel {
     private JPasswordField passwordField;
     private JTextField usernameField;
     private JPanel roundedLoginPanel;
-    private JPanel roundedRegisterPanel;
     private JLabel usernameLabel;
     private JLabel passwordLabel;
     private JLabel loginLabel;
-    private JLabel registerLabel;
     private JLabel dontHaveAnAccountLabel;
     private JLabel infoLabel;
     private JLabel welcomeLabel;
@@ -35,6 +33,7 @@ public class LoginCardPanel {
         this.controller = controller;
 
         setupStyle();
+        setupDontHaveAnAccountLabel();
     }
 
     public JPanel getRootPanel() {
@@ -46,17 +45,13 @@ public class LoginCardPanel {
         infoLabel.setForeground(UIColors.CARMINE_RED);
         usernameLabel.setForeground(Color.GRAY);
         passwordLabel.setForeground(Color.GRAY);
-        dontHaveAnAccountLabel.setForeground(Color.GRAY);
         loginLabel.setForeground(Color.WHITE);
-        registerLabel.setForeground(Color.WHITE);
     }
 
     private void createUIComponents() {
         roundedLoginPanel = new RoundedPanel();
-        roundedRegisterPanel = new RoundedPanel();
 
         setupLoginPanel();
-        setupRegisterPanel();
     }
 
     private void setupLoginPanel() {
@@ -113,21 +108,12 @@ public class LoginCardPanel {
         );
     }
 
-    private void setupRegisterPanel() {
-        roundedRegisterPanel.setBackground(UIColors.NIGHT_BLUE);
-        roundedRegisterPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                roundedRegisterPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                roundedRegisterPanel.setBackground(UIColors.CARMINE_RED);
-            }
+    private void setupDontHaveAnAccountLabel() {
+        dontHaveAnAccountLabel.setForeground(UIColors.HYPERLINK_BLUE);
+        dontHaveAnAccountLabel.setText("<html><u>Don't have an account? Register!</u></html>");
+        dontHaveAnAccountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                roundedRegisterPanel.setCursor(Cursor.getDefaultCursor());
-                roundedRegisterPanel.setBackground(UIColors.NIGHT_BLUE);
-            }
-
+        dontHaveAnAccountLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 CardLayout layout = (CardLayout) cardPanel.getLayout();
