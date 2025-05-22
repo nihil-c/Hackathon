@@ -1,9 +1,6 @@
 package controller;
 
-import exceptions.*;
 import model.*;
-
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -17,97 +14,67 @@ public class Controller {
         this.hackathons = new ArrayList<>();
     }
 
-    // Getter
-    public User getCurrentUser() {
-        return currentUser;
+    public void registerUser(String username, String email, String password) throws Exception {
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            throw new Exception("Missing user information.");
+        }
+        for (User u : users) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
+                throw new Exception("Username already taken.");
+            }
+        }
+        users.add(new User(username, email, password));
     }
 
-    public ArrayList<User> getUsers() {
-        return users;
+    public void loginUser(String username, String password) throws Exception {
+        for (User user : users) {
+            if (user.getUsername().equalsIgnoreCase(username)) {
+                if (user.getPassword().equals(password)) {
+                    this.currentUser = user;
+                    return;
+                } else {
+                    throw new Exception("Incorrect password.");
+                }
+            }
+        }
+        throw new Exception("User not found.");
+    }
+
+    public void logoutUser() {
+        this.currentUser = null;
+    }
+
+    public void assignRoleToCurrentUser(String role) {
+        switch (role.toLowerCase()) {
+            case "participant":
+                currentUser.setRole(new ParticipantRole());
+                break;
+            case "organizer":
+                currentUser.setRole(new OrganizerRole());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid role.");
+        }
+    }
+
+    public void createHackathon(String title, String location, LocalDate startDate, LocalDate endDate) throws Exception {
+        Hackathon h = new Hackathon(title, location, startDate, endDate, currentUser);
+        hackathons.add(h);
+    }
+
+    public void registerToHackathon(Hackathon hackathon) throws Exception {
+        hackathon.addParticipant(currentUser);
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     public ArrayList<Hackathon> getHackathons() {
         return hackathons;
     }
 
-    public void registerUser(String username, String email, String password)
-            throws EmptyFieldException, UsernameAlreadyTakenException, EmailAlreadyInUseException {
-        if (username == null || username.isBlank() || email == null || email.isBlank() || password == null || password.isBlank()) {
-            throw new EmptyFieldException();
-        }
-
-        for (User user : users) {
-            if (username.equalsIgnoreCase(user.getUsername())) {
-                throw new UsernameAlreadyTakenException();
-            }
-
-            if (email.equalsIgnoreCase(user.getEmail())) {
-                throw new EmailAlreadyInUseException();
-            }
-        }
-
-        User newUser = new User(username, email, password);
-        users.add(newUser);
+    public ArrayList<User> getUsers() {
+        return users;
     }
-
-    public void loginUser(String username, String password)
-            throws EmptyFieldException, UserNotFoundException, IncorrectPasswordException {
-
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            throw new EmptyFieldException();
-        }
-
-        for (User user : users) {
-            if (username.equalsIgnoreCase(user.getUsername())) {
-                if (password.equals(user.getPassword())) {
-                    this.currentUser = user;
-                    return;
-                } else {
-                    throw new IncorrectPasswordException();
-                }
-            }
-        }
-
-        throw new UserNotFoundException();
-    }
-
-    public void logoutUser() {
-        currentUser = null;
-    }
-
-    public User changeUserRole(String role) {
-        User newUser = null;
-
-        switch (role.toLowerCase()) {
-            case "organizer":
-                newUser = new Organizer(currentUser.getUsername(), currentUser.getEmail(), currentUser.getPassword());
-                break;
-            case "participant":
-                newUser = new Participant(currentUser.getUsername(), currentUser.getEmail(), currentUser.getPassword());
-                break;
-            case "judge":
-                // newUser = new Judge(currentUser.getUsername(), currentUser.getEmail());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown role: " + role);
-        }
-
-        int index = users.indexOf(currentUser);
-        if (index != -1) {
-            users.set(index, newUser);
-            currentUser = newUser;
-            return newUser;
-        } else {
-            throw new RuntimeException("User not found");
-        }
-    }
-
-    public void addHackathon(Hackathon hackathon) {
-        hackathons.add(hackathon);
-    }
-
-    public void registerParticipantToHackathon(Participant participant, Hackathon hackathon) throws Exception {
-        hackathon.addParticipant(participant);
-    }
-
 }

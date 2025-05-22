@@ -1,6 +1,6 @@
 package gui;
 
-import controller.*;
+import controller.Controller;
 import exceptions.*;
 import utils.*;
 
@@ -69,14 +69,14 @@ public class LoginCardPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                handleLogin();
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedLoginPanel.setCursor(Cursor.getDefaultCursor());
                 roundedLoginPanel.setBackground(UIColors.CARMINE_RED);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleLogin();
             }
         });
     }
@@ -88,19 +88,19 @@ public class LoginCardPanel {
         try {
             controller.loginUser(username, password);
 
-            // Open main frame and close auth frame
             SwingUtilities.invokeLater(() -> {
                 new MainFrame(controller).setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
                 if (frame != null) frame.dispose();
             });
-
         } catch (EmptyFieldException e) {
             showErrorDialog("Fields must not be empty.");
         } catch (UserNotFoundException e) {
             showErrorDialog("User not found.");
         } catch (IncorrectPasswordException e) {
             showErrorDialog("Password is not correct.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -123,15 +123,15 @@ public class LoginCardPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                CardLayout layout = (CardLayout) cardPanel.getLayout();
-                layout.show(cardPanel, "register");
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedRegisterPanel.setCursor(Cursor.getDefaultCursor());
                 roundedRegisterPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                CardLayout layout = (CardLayout) cardPanel.getLayout();
+                layout.show(cardPanel, "register");
             }
         });
     }

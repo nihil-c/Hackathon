@@ -42,7 +42,7 @@ public class RegistrationCardPanel {
     }
 
     private void customizeComponents() {
-        errorLabel.setForeground(Color.RED);
+        errorLabel.setForeground(UIColors.CARMINE_RED);
         errorLabel.setVisible(false);
 
         usernameLabel.setForeground(Color.GRAY);
@@ -137,6 +137,8 @@ public class RegistrationCardPanel {
             showErrorDialog("This username is already taken.");
         } catch (EmailAlreadyInUseException ex) {
             showErrorDialog("This email is already in use.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -149,4 +151,3 @@ public class RegistrationCardPanel {
         );
     }
 }
-

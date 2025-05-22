@@ -1,6 +1,6 @@
 package gui;
 
-import controller.*;
+import controller.Controller;
 import utils.*;
 
 import javax.swing.*;
@@ -46,9 +46,9 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
 
-        cardPanel.add(new DashboardCardPanel(controller, this).getRootPanel(), "dashboard");
-        // cardPanel.add(new HackathonCardPanel(controller).getRootPanel(), "hackathon");
-        // cardPanel.add(new TeamCardPanel(controller).getRootPanel(), "team");
+        cardPanel.add(new DashboardCardPanel(controller).getRootPanel(), "dashboard");
+        cardPanel.add(new HackathonCardPanel(controller).getRootPanel(), "hackathon");
+        cardPanel.add(new TeamCardPanel(controller).getRootPanel(), "team");
         // cardPanel.add(new ManageCardPanel(controller).getRootPanel(), "manage");
 
         cardLayout.show(cardPanel, "dashboard");
@@ -90,14 +90,14 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "dashboard");
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedDashboardPanel.setCursor(Cursor.getDefaultCursor());
                 roundedDashboardPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cardLayout.show(cardPanel, "dashboard");
             }
         });
     }
@@ -112,14 +112,14 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "hackathon");
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedHackathonPanel.setCursor(Cursor.getDefaultCursor());
                 roundedHackathonPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cardLayout.show(cardPanel, "hackathon");
             }
         });
     }
@@ -134,14 +134,14 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "team");
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedTeamPanel.setCursor(Cursor.getDefaultCursor());
                 roundedTeamPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cardLayout.show(cardPanel, "team");
             }
         });
     }
@@ -156,14 +156,14 @@ public class MainFrame extends JFrame {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "manage");
-            }
-
-            @Override
             public void mouseExited(MouseEvent e) {
                 roundedManagePanel.setCursor(Cursor.getDefaultCursor());
                 roundedManagePanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                cardLayout.show(cardPanel, "manage");
             }
         });
     }
@@ -178,6 +178,12 @@ public class MainFrame extends JFrame {
             }
 
             @Override
+            public void mouseExited(MouseEvent e) {
+                roundedLogoutPanel.setCursor(Cursor.getDefaultCursor());
+                roundedLogoutPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+
+            @Override
             public void mousePressed(MouseEvent e) {
                 // Open auth frame and close main frame
                 SwingUtilities.invokeLater(() -> {
@@ -185,12 +191,6 @@ public class MainFrame extends JFrame {
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
                     if (frame != null) frame.dispose();
                 });
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                roundedLogoutPanel.setCursor(Cursor.getDefaultCursor());
-                roundedLogoutPanel.setBackground(UIColors.NIGHT_BLUE);
             }
         });
     }

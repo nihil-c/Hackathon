@@ -1,9 +1,13 @@
 package gui;
 
-import controller.*;
-import exceptions.*;
-import model.*;
-import utils.*;
+import controller.Controller;
+import model.Hackathon;
+import model.OrganizerRole;
+import model.ParticipantRole;
+import model.Role;
+import model.User;
+import utils.RoundedPanel;
+import utils.UIColors;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +24,11 @@ public class DashboardCardPanel {
     private JScrollPane scrollPanel;
     private JPanel eventListPanel;
     private JLabel infoLabel;
+    private JLabel openEventsLabel;
 
     private final Controller controller;
 
-    public DashboardCardPanel(Controller controller, MainFrame parent) {
+    public DashboardCardPanel(Controller controller) {
         this.controller = controller;
 
         setupScrollPanel();
@@ -38,7 +43,7 @@ public class DashboardCardPanel {
         scrollPanel.getVerticalScrollBar().setUnitIncrement(10);
 
         eventListPanel.setLayout(new BoxLayout(eventListPanel, BoxLayout.Y_AXIS));
-        eventListPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        eventListPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
     }
 
     private void populateEventListPanel() {
@@ -46,10 +51,8 @@ public class DashboardCardPanel {
             infoLabel.setVisible(true);
         } else {
             infoLabel.setVisible(false);
-
             for (Hackathon hackathon : controller.getHackathons()) {
                 RoundedPanel card = createEventCard(hackathon);
-
                 eventListPanel.add(card, 0);
                 eventListPanel.add(Box.createVerticalStrut(15), 1);
             }
@@ -63,18 +66,26 @@ public class DashboardCardPanel {
         card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel titleLabel = new JLabel(hackathon.getTitle());
+        JLabel locationLabel = new JLabel("Location: " + hackathon.getLocation());
         JLabel startDateLabel = new JLabel("Start Date: " + hackathon.getStartDate());
         JLabel endDateLabel = new JLabel("End Date: " + hackathon.getEndDate());
+        JLabel registrationDeadlineLabel = new JLabel("Registration deadline: " + hackathon.getStartDate().minusDays(2));
         JLabel organizerLabel = new JLabel("Organizer: " + hackathon.getOrganizer().getUsername());
+        JLabel creationDateLabel = new JLabel("Creation Date: " + LocalDate.now());
 
         titleLabel.setForeground(UIColors.CARMINE_RED);
         titleLabel.setFont(new Font(null, Font.BOLD, 14));
+        creationDateLabel.setForeground(Color.GRAY);
 
         card.add(titleLabel);
         card.add(Box.createVerticalStrut(5));
+        card.add(locationLabel);
         card.add(startDateLabel);
         card.add(endDateLabel);
+        card.add(registrationDeadlineLabel);
         card.add(organizerLabel);
+        card.add(Box.createVerticalStrut(5));
+        card.add(creationDateLabel);
 
         makeCardInteractive(card, hackathon);
 
@@ -87,30 +98,25 @@ public class DashboardCardPanel {
             public void mousePressed(MouseEvent e) {
                 int result = JOptionPane.showConfirmDialog(
                         null,
-                        "Do you want to register to this hackathon?",
+                        "Do you want to register to this hackathon?\n\nOrganizers cannot participate to open events.",
                         "Register",
                         JOptionPane.OK_CANCEL_OPTION
                 );
 
                 if (result == JOptionPane.OK_OPTION) {
+                    User currentUser = controller.getCurrentUser();
+                    Role role = currentUser.getRoleInstance();
 
-                    // Solo un user può partecipare ad un hackacthon infatti alla fine di quest'ultimo tutti i ruoli vengono azzerati ad user
-                    if (controller.getCurrentUser().getRole().equals("USER")) {
-                        try {
-                            controller.changeUserRole("participant");
-                            controller.registerParticipantToHackathon((Participant) controller.getCurrentUser(), hackathon);
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(
-                                    null,
-                                    ex.getMessage(),
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
+                    try {
+                        if (!(role instanceof ParticipantRole)) {
+                            controller.assignRoleToCurrentUser("participant");
                         }
-                    } else {
+                        controller.registerToHackathon(hackathon);
+                        JOptionPane.showMessageDialog(null, "Successfully registered!");
+                    } catch (Exception ex) {
                         JOptionPane.showMessageDialog(
                                 null,
-                                "You cannot register to the event.",
+                                ex.getMessage(),
                                 "Error",
                                 JOptionPane.ERROR_MESSAGE
                         );
@@ -134,15 +140,15 @@ public class DashboardCardPanel {
 
     private void customizeComponents() {
         dashboardLabel.setForeground(UIColors.NIGHT_BLUE);
-        welcomeLabel.setText("Welcome, " + controller.getCurrentUser().getUsername() + "!");
+        welcomeLabel.setText("Welcome, @" + controller.getCurrentUser().getUsername() + "!");
         welcomeLabel.setForeground(Color.GRAY);
+        openEventsLabel.setForeground(UIColors.CARMINE_RED);
         addLabel.setForeground(Color.WHITE);
-        infoLabel.setForeground(UIColors.CARMINE_RED);
+        infoLabel.setForeground(Color.GRAY);
     }
 
     private void createUIComponents() {
         roundedAddPanel = new RoundedPanel();
-
         setupAddPanel();
     }
 
@@ -164,49 +170,67 @@ public class DashboardCardPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 JTextField titleField = new JTextField();
-                JTextField startDateField = new JTextField("YYYY-MM-DD");
-                JTextField endDateField = new JTextField("YYYY-MM-DD");
+                JTextField locationField = new JTextField();
+                JTextField startDateField = new JTextField(LocalDate.now().toString());
+                JTextField endDateField = new JTextField(LocalDate.now().toString());
 
+                Dimension maxSize = new Dimension(Integer.MAX_VALUE, 30);
+                titleField.setMaximumSize(maxSize);
+                locationField.setMaximumSize(maxSize);
+                startDateField.setMaximumSize(maxSize);
+                endDateField.setMaximumSize(maxSize);
 
-                JPanel panel = new JPanel(new GridLayout(0, 1));
-                panel.add(new JLabel("Title:")).setForeground(Color.GRAY);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                panel.add(new JLabel("Title:"));
                 panel.add(titleField);
-                panel.add(new JLabel("Start Date:")).setForeground(Color.GRAY);
+                panel.add(Box.createVerticalStrut(10));
+
+                panel.add(new JLabel("Location:"));
+                panel.add(locationField);
+                panel.add(Box.createVerticalStrut(10));
+
+                panel.add(new JLabel("Start Date (YYYY-MM-DD):"));
                 panel.add(startDateField);
-                panel.add(new JLabel("End Date:")).setForeground(Color.GRAY);
+                panel.add(Box.createVerticalStrut(10));
+
+                panel.add(new JLabel("End Date (YYYY-MM-DD):"));
                 panel.add(endDateField);
+                panel.add(Box.createVerticalStrut(10));
+
+                panel.add(new JLabel("By pressing OK you will become the event Organizer."));
+                panel.add(new JLabel("Organizers cannot join or manage more than one event."));
 
                 int result = JOptionPane.showConfirmDialog(
                         null,
                         panel,
                         "Add Hackathon",
                         JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.PLAIN_MESSAGE
+                );
 
                 if (result == JOptionPane.OK_OPTION) {
                     try {
-                        controller.changeUserRole("organizer");
+                        controller.assignRoleToCurrentUser("organizer");
 
-                        String title = titleField.getText().trim();
-                        LocalDate startDate = LocalDate.parse(startDateField.getText().trim());
-                        LocalDate endDate = LocalDate.parse(endDateField.getText().trim());
+                        String title = titleField.getText();
+                        String location = locationField.getText();
+                        LocalDate startDate = LocalDate.parse(startDateField.getText());
+                        LocalDate endDate = LocalDate.parse(endDateField.getText());
 
-                        Hackathon newHackathon = new Hackathon(
-                                title,
-                                startDate,
-                                endDate,
-                                (Organizer) controller.getCurrentUser()
-                        );
-
-                        controller.addHackathon(newHackathon);
-
+                        controller.createHackathon(title, location, startDate, endDate);
                         updateEventListPanel();
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Invalid input: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Invalid input: " + ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
                     }
                 }
             }
-
         });
     }
 

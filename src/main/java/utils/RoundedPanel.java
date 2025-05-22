@@ -8,7 +8,7 @@ public class RoundedPanel extends JPanel {
 
     public RoundedPanel() {
         super();
-        this.cornerRadius = 10;
+        this.cornerRadius = 20;
         setOpaque(false);
     }
 
