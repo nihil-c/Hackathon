@@ -1,5 +1,4 @@
 import controller.*;
-import exceptions.*;
 import gui.*;
 import model.JudgeRole;
 import model.OrganizerRole;

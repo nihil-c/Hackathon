@@ -1,6 +1,12 @@
 package model;
 
 public class JudgeRole implements Role {
+    private User user;
+
+    public JudgeRole(User judge) {
+        this.user = judge;
+    }
+
     @Override
     public String getRoleName() {
         return "Judge";

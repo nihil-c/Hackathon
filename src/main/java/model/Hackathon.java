@@ -42,6 +42,14 @@ public class Hackathon {
         }
     }
 
+    public void addTeam(Team team) throws AlreadyRegisteredToHackathonException {
+        if (!teams.contains(team)) {
+            teams.add(team);
+        } else {
+            throw new AlreadyRegisteredToHackathonException();
+        }
+    }
+
     public String getTitle() {
         return title;
     }
@@ -68,6 +76,10 @@ public class Hackathon {
 
     public ArrayList<User> getParticipants() {
         return participants;
+    }
+
+    public ArrayList<Team> getTeams() {
+        return teams;
     }
 
     public void setProblemStatement(String problemStatement) {

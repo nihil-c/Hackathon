@@ -207,30 +207,37 @@ public class HackathonCardPanel {
             public void mousePressed(MouseEvent e) {
                 User currentUser = controller.getCurrentUser();
 
-                // if (currentUser.getRoleInstance() instanceof JudgeRole) {
-                JTextArea textArea = new JTextArea(10, 40); // 10 righe, 40 colonne
-                textArea.setLineWrap(true);
-                textArea.setWrapStyleWord(true);
+                if (currentUser.getRoleInstance() instanceof JudgeRole) {
+                    JTextArea textArea = new JTextArea(10, 40); // 10 righe, 40 colonne
+                    textArea.setLineWrap(true);
+                    textArea.setWrapStyleWord(true);
 
-                JScrollPane scrollPane = new JScrollPane(textArea);
+                    JScrollPane scrollPane = new JScrollPane(textArea);
 
-                int result = JOptionPane.showConfirmDialog(
-                        null,
-                        scrollPane,
-                        "Enter new Problem Statement",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE
-                );
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            scrollPane,
+                            "Enter new Problem Statement",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE
+                    );
 
-                if (result == JOptionPane.OK_OPTION) {
-                    String newStatement = textArea.getText().trim();
-                    if (!newStatement.isEmpty()) {
-                        currentUser.getRegisteredHackathon().setProblemStatement(newStatement);
-                        problemStatementTextArea.setText(newStatement); // aggiorna la dashboard
+                    if (result == JOptionPane.OK_OPTION) {
+                        String newStatement = textArea.getText().trim();
+                        if (!newStatement.isEmpty()) {
+                            currentUser.getRegisteredHackathon().setProblemStatement(newStatement);
+                            problemStatementTextArea.setText(newStatement);
+                        }
                     }
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Only Judges can edit this field.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
-                }
-            //}
+            }
 
             @Override
             public void mouseEntered(MouseEvent e) {

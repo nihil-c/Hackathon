@@ -64,10 +64,10 @@ public class Controller {
     public void assignRoleToCurrentUser(String role) {
         switch (role.toLowerCase()) {
             case "participant":
-                currentUser.setRole(new ParticipantRole());
+                currentUser.setRole(new ParticipantRole(currentUser));
                 break;
             case "organizer":
-                currentUser.setRole(new OrganizerRole());
+                currentUser.setRole(new OrganizerRole(currentUser));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid role.");
