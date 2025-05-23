@@ -13,6 +13,9 @@ public class Hackathon {
     private LocalDate registrationDeadline;
     private User organizer;
     private ArrayList<User> participants;
+    private ArrayList<User> judges;
+    private ArrayList<Team> teams;
+    private ArrayList<Team> ranking;
 
     public Hackathon(String title, String location, LocalDate startDate, LocalDate endDate, User organizer) throws Exception {
         if (title.isEmpty() || location.isEmpty() || startDate == null || endDate == null || organizer == null) {
