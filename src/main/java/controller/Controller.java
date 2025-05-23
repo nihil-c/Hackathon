@@ -4,14 +4,15 @@ import exceptions.*;
 import model.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Controller {
     private User currentUser;
-    private ArrayList<User> users;
+    private HashMap<String, User> users; // L'HashMap permette di creare un collegamento univoco tra Stringa (username) e Oggetto (User)
     private ArrayList<Hackathon> hackathons;
 
     public Controller() {
-        this.users = new ArrayList<>();
+        this.users = new HashMap<>();
         this.hackathons = new ArrayList<>();
     }
 
@@ -20,17 +21,20 @@ public class Controller {
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             throw new EmptyFieldException();
         }
-        for (User u : users) {
-            if (u.getUsername().equalsIgnoreCase(username)) {
-                throw new UsernameAlreadyTakenException();
-            }
 
+        if (users.containsKey(username.toLowerCase())) {
+            throw new UsernameAlreadyTakenException();
+        }
+
+        for (User u : users.values()) {
             if (u.getEmail().equalsIgnoreCase(email)) {
                 throw new EmailAlreadyInUseException();
             }
         }
-        users.add(new User(username, email, password));
+
+        users.put(username.toLowerCase(), new User(username, email, password));
     }
+
 
     public void loginUser(String username, String password)
             throws EmptyFieldException, IncorrectPasswordException, UserNotFoundException {
@@ -39,18 +43,19 @@ public class Controller {
             throw new EmptyFieldException();
         }
 
-        for (User user : users) {
-            if (user.getUsername().equalsIgnoreCase(username)) {
-                if (user.getPassword().equals(password)) {
-                    this.currentUser = user;
-                    return;
-                } else {
-                    throw new IncorrectPasswordException();
-                }
-            }
+        User user = users.get(username.toLowerCase());
+
+        if (user == null) {
+            throw new UserNotFoundException();
         }
-        throw new UserNotFoundException();
+
+        if (!user.getPassword().equals(password)) {
+            throw new IncorrectPasswordException();
+        }
+
+        this.currentUser = user;
     }
+
 
     public void logoutUser() {
         this.currentUser = null;
@@ -76,13 +81,16 @@ public class Controller {
     public User getCurrentUser() {
         return currentUser;
     }
-    
+
+    public User getUserByUsername(String username) {
+        return users.get(username);
+    }
 
     public ArrayList<Hackathon> getHackathons() {
         return hackathons;
     }
 
     public ArrayList<User> getUsers() {
-        return users;
+        return new ArrayList<>(users.values());
     }
 }

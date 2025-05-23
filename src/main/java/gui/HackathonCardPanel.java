@@ -91,7 +91,8 @@ public class HackathonCardPanel {
         rankingListPanel.setVisible(false);
 
         problemStatementTextArea.setBackground(null);
-        problemStatementTextArea.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullamco laboriosam, nisi ut aliquid ex ea commodi consequatur. Duis aute irure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        problemStatementTextArea.setForeground(Color.GRAY);
+        problemStatementTextArea.setText("Problem statement in empty.");
     }
     
     private void addHackathonInfo() {
@@ -204,8 +205,32 @@ public class HackathonCardPanel {
         roundedEditPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-            }
+                User currentUser = controller.getCurrentUser();
+
+                // if (currentUser.getRoleInstance() instanceof JudgeRole) {
+                JTextArea textArea = new JTextArea(10, 40); // 10 righe, 40 colonne
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+
+                JScrollPane scrollPane = new JScrollPane(textArea);
+
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        scrollPane,
+                        "Enter new Problem Statement",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String newStatement = textArea.getText().trim();
+                    if (!newStatement.isEmpty()) {
+                        currentUser.getRegisteredHackathon().setProblemStatement(newStatement);
+                        problemStatementTextArea.setText(newStatement); // aggiorna la dashboard
+                    }
+                }
+                }
+            //}
 
             @Override
             public void mouseEntered(MouseEvent e) {
