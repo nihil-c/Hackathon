@@ -11,6 +11,7 @@ public class Hackathon {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate registrationDeadline;
+    private String problemStatement;
     private User organizer;
     private ArrayList<User> participants;
     private ArrayList<User> judges;
@@ -41,11 +42,35 @@ public class Hackathon {
         }
     }
 
-    public String getTitle() { return title; }
-    public String getLocation() { return location; }
-    public LocalDate getStartDate() { return startDate; }
-    public LocalDate getEndDate() { return endDate; }
-    public LocalDate getRegistrationDeadline() { return registrationDeadline; }
-    public User getOrganizer() { return organizer; }
-    public ArrayList<User> getParticipants() { return participants; }
+    public String getTitle() {
+        return title;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public LocalDate getRegistrationDeadline() {
+        return registrationDeadline;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public ArrayList<User> getParticipants() {
+        return participants;
+    }
+
+    public void setProblemStatement(String problemStatement) {
+        this.problemStatement = problemStatement;
+    }
 }
