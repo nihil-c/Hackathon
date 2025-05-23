@@ -1,8 +1,6 @@
 package model;
 
-import exceptions.AlreadyOrganizingAnotherEventException;
-import exceptions.AlreadyRegisteredToHackathonException;
-import exceptions.OrganizerSelfRegistrationException;
+import exceptions.*;
 
 import java.time.LocalDate;
 
@@ -65,26 +63,29 @@ public class User {
         this.role = role; 
     }
 
-    public Hackathon createHackathon(String title, String location, LocalDate startDate, LocalDate endDate) throws Exception {
-        return new Hackathon(title, location, startDate, endDate, this);
+    public Hackathon createHackathon(String title, String location, LocalDate startDate, LocalDate endDate)
+            throws MissingHackathonDataException, InvalidOrganizerException {
+
+        this.role = new OrganizerRole(this);
+        Hackathon hackathon = new Hackathon(title, location, startDate, endDate, this);
+        this.registeredHackathon = hackathon;
+        return hackathon;
     }
 
-    /* Solo uno user che non si è mai registrato ad al più di un Hackathon oppure che non 
-    lo ha mai organizzato oppure mai partecipato nelle vesti di giudice 
-    può registrarsi ad un hackathon. Una volta iscritto diventa automaticamente un participant. */
+
     public void registerToHackathon(Hackathon hackathon)
             throws OrganizerSelfRegistrationException, AlreadyRegisteredToHackathonException, AlreadyOrganizingAnotherEventException {
+
         if (this.role instanceof OrganizerRole) {
-            if (this.registeredHackathon.equals(hackathon)) {
+            if (this.registeredHackathon != null && this.registeredHackathon.equals(hackathon)) {
                 throw new OrganizerSelfRegistrationException();
             }
             throw new AlreadyOrganizingAnotherEventException();
         }
 
-        try {
-            hackathon.addParticipant(this);
-        } catch (AlreadyRegisteredToHackathonException ex) {
-            throw new AlreadyRegisteredToHackathonException();
-        }
+        hackathon.addParticipant(this);
+
+        this.registeredHackathon = hackathon;
+        this.role = new ParticipantRole(this);
     }
 }

@@ -2,6 +2,7 @@ package model;
 
 import exceptions.AlreadyHaveATeamException;
 import exceptions.AlreadyRegisteredToHackathonException;
+import exceptions.InvalidAccessCodeException;
 import exceptions.TeamDoesNotExistException;
 
 public class ParticipantRole implements Role {
@@ -20,28 +21,29 @@ public class ParticipantRole implements Role {
 
     public void createTeam(Hackathon hackathon, String name) throws AlreadyRegisteredToHackathonException {
         Team newTeam = new Team(name);
-
-        try {
-            hackathon.addTeam(team);
-        } catch (AlreadyRegisteredToHackathonException ex) {
-            throw new AlreadyRegisteredToHackathonException();
-        }
+        newTeam.addMember(this.user);  // aggiunge il creatore al team
+        hackathon.addTeam(newTeam);    // aggiunge il team all'hackathon
+        this.team = newTeam;           // memorizza il team in questo ruolo
     }
+
 
     public void joinTeam(Hackathon hackathon, Team team, String accessCode)
-            throws TeamDoesNotExistException, AlreadyHaveATeamException {
-        if (this.team == null) {
-            if (hackathon.getTeams().contains(team)) {
-                for (Team t : hackathon.getTeams()) {
-                    if (t.getAccessCode().equalsIgnoreCase(accessCode)) {
-                        t.addMember(this.user);
-                    }
-                }
-            } else {
-                throw new TeamDoesNotExistException();
-            }
-        } else {
+            throws TeamDoesNotExistException, AlreadyHaveATeamException, InvalidAccessCodeException {
+
+        if (this.team != null) {
             throw new AlreadyHaveATeamException();
         }
+
+        if (!hackathon.getTeams().contains(team)) {
+            throw new TeamDoesNotExistException();
+        }
+
+        if (!team.getAccessCode().equals(accessCode)) {
+            throw new InvalidAccessCodeException();
+        }
+
+        team.addMember(this.user); // aggiunge l'utente al team
+        this.team = team;          // aggiorna il riferimento interno al team
     }
+
 }

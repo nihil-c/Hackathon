@@ -1,6 +1,8 @@
 package model;
 
 import exceptions.AlreadyRegisteredToHackathonException;
+import exceptions.InvalidOrganizerException;
+import exceptions.MissingHackathonDataException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,20 +20,30 @@ public class Hackathon {
     private ArrayList<Team> teams;
     private ArrayList<Team> ranking;
 
-    public Hackathon(String title, String location, LocalDate startDate, LocalDate endDate, User organizer) throws Exception {
-        if (title.isEmpty() || location.isEmpty() || startDate == null || endDate == null || organizer == null) {
-            throw new Exception("Missing required hackathon data.");
+    public Hackathon(String title, String location, LocalDate startDate, LocalDate endDate, User organizer)
+            throws MissingHackathonDataException, InvalidOrganizerException {
+
+        if (title == null || title.isEmpty() ||
+                location == null || location.isEmpty() ||
+                startDate == null || endDate == null || organizer == null) {
+            throw new MissingHackathonDataException();
         }
+
         if (!(organizer.getRoleInstance() instanceof OrganizerRole)) {
-            throw new Exception("User is not an organizer.");
+            throw new InvalidOrganizerException();
         }
+
         this.title = title;
         this.location = location;
         this.startDate = startDate;
         this.endDate = endDate;
         this.registrationDeadline = startDate.minusDays(2);
         this.organizer = organizer;
+
         this.participants = new ArrayList<>();
+        this.judges = new ArrayList<>();
+        this.teams = new ArrayList<>();
+        this.ranking = new ArrayList<>();
     }
 
     public void addParticipant(User user) throws AlreadyRegisteredToHackathonException {
