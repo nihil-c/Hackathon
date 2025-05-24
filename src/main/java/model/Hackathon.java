@@ -54,6 +54,12 @@ public class Hackathon {
         }
     }
 
+    public void addJudge(User judge) {
+        if (!judges.contains(judge)) {
+            judges.add(judge);
+        }
+    }
+
     public void addTeam(Team team) throws AlreadyRegisteredToHackathonException {
         if (!teams.contains(team)) {
             teams.add(team);

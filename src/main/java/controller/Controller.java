@@ -69,10 +69,14 @@ public class Controller {
             case "organizer":
                 currentUser.setRole(new OrganizerRole(currentUser));
                 break;
+            case "judge":
+                currentUser.setRole(new JudgeRole(currentUser));
+                break;
             default:
-                throw new IllegalArgumentException("Invalid role.");
+                throw new IllegalArgumentException("Role not recognized.");
         }
     }
+
 
     public void addHackathonToList(Hackathon hackathon) {
         hackathons.add(hackathon);

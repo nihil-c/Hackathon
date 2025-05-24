@@ -13,6 +13,7 @@ public class Team {
         this.teamName = teamName;
         this.accessCode = "43%1oP()87";
         this.score = -1;
+        this.members = new ArrayList<>();
     }
 
     public void addMember(User participant) {
