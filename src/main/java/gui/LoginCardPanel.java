@@ -1,18 +1,14 @@
 package gui;
 
 import controller.Controller;
-import exceptions.*;
-import utils.*;
+import utils.RoundedPanel;
+import utils.UIColors;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * LoginCardPanel is a GUI panel that handles user login
- * and navigation to the registration panel.
- */
 public class LoginCardPanel {
     private JPanel rootPanel;
     private JPanel cardPanel;
@@ -32,91 +28,46 @@ public class LoginCardPanel {
         this.cardPanel = cardPanel;
         this.controller = controller;
 
-        setupStyle();
-        setupDontHaveAnAccountLabel();
+        customizeComponents();
     }
 
-    public JPanel getRootPanel() {
-        return rootPanel;
-    }
-
-    private void setupStyle() {
+    public void customizeComponents() {
         welcomeLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
         usernameLabel.setForeground(Color.GRAY);
-        passwordLabel.setForeground(Color.GRAY);
+        passwordField.setForeground(Color.GRAY);
         loginLabel.setForeground(Color.WHITE);
+        roundedLoginPanel.setBackground(UIColors.NIGHT_BLUE);
     }
 
     private void createUIComponents() {
         roundedLoginPanel = new RoundedPanel();
 
-        setupLoginPanel();
+        setupLoginPanelListener();
     }
 
-    private void setupLoginPanel() {
-        roundedLoginPanel.setBackground(UIColors.CARMINE_RED);
+    public void setupLoginPanelListener() {
         roundedLoginPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+            }
+
             @Override
             public void mouseEntered(MouseEvent e) {
                 roundedLoginPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                roundedLoginPanel.setBackground(UIColors.PRESSED_CARMINE_RED);
+                roundedLoginPanel.setBackground(UIColors.CARMINE_RED);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 roundedLoginPanel.setCursor(Cursor.getDefaultCursor());
-                roundedLoginPanel.setBackground(UIColors.CARMINE_RED);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                handleLogin();
+                roundedLoginPanel.setBackground(UIColors.NIGHT_BLUE);
             }
         });
     }
 
-    private void handleLogin() {
-        final String username = usernameField.getText();
-        final String password = new String(passwordField.getPassword());
-
-        try {
-            controller.loginUser(username, password);
-
-            SwingUtilities.invokeLater(() -> {
-                new MainFrame(controller).setVisible(true);
-                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
-                if (frame != null) frame.dispose();
-            });
-        } catch(EmptyFieldException ex) {
-            showErrorDialog("You must fill all the available fields.");
-        } catch (UserNotFoundException ex) {
-            showErrorDialog("User not found.");
-        } catch (IncorrectPasswordException ex) {
-            showErrorDialog("Password is not correct.");
-        }
-    }
-
-    private void showErrorDialog(String message) {
-        JOptionPane.showMessageDialog(
-                rootPanel,
-                message,
-                "Login Error",
-                JOptionPane.ERROR_MESSAGE
-        );
-    }
-
-    private void setupDontHaveAnAccountLabel() {
-        dontHaveAnAccountLabel.setForeground(UIColors.HYPERLINK_BLUE);
-        dontHaveAnAccountLabel.setText("<html><u>Don't have an account? Register!</u></html>");
-        dontHaveAnAccountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-        dontHaveAnAccountLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                CardLayout layout = (CardLayout) cardPanel.getLayout();
-                layout.show(cardPanel, "register");
-            }
-        });
+    public JPanel getRootPanel() {
+        return rootPanel;
     }
 }

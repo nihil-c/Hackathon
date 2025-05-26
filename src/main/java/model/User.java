@@ -1,91 +1,67 @@
 package model;
 
-import exceptions.*;
-
-import java.time.LocalDate;
+import exceptions.BlankFieldException;
 
 public class User {
+    // Attributi
     private String username;
     private String email;
     private String password;
-    private Hackathon registeredHackathon;
     private Role role;
 
-    public User(String username, String email, String password) {
+    private Hackathon hackathon;
+
+    // Costruttore
+    public User(String username, String email, String password) throws Exception {
+        // Eccezioni
+        if (username == null || email == null || password == null) throw new Exception();
+        if (username.isBlank() || email.isBlank() || password.isBlank()) throw new BlankFieldException();
+
+        // Assegnazioni
         this.username = username;
         this.email = email;
         this.password = password;
-        this.registeredHackathon = null;
         this.role = null;
     }
 
-    public String getUsername() { 
-        return username; 
-    }
-    
-    public String getEmail() { 
-        return email; 
-    }
-    
-    public String getPassword() { 
-        return password; 
-    }
-    
-    public Hackathon getRegisteredHackathon() {
-        return registeredHackathon;
-    }
-    
-    public String getRole() { 
-        return role == null ? "User" : role.getRoleName(); 
-    }
-    
-    public Role getRoleInstance() { 
-        return role; 
+    // Getter & Setter
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsername(String username) { 
-        this.username = username; 
-    }
-    
-    public void setEmail(String email) { 
-        this.email = email; 
-    }
-    
-    public void setPassword(String password) { 
-        this.password = password; 
-    }
-    
-    public void setRegisteredHackathon(Hackathon hackathon) {
-        this.registeredHackathon = hackathon;
-    }
-    
-    public void setRole(Role role) { 
-        this.role = role; 
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public Hackathon createHackathon(String title, String location, LocalDate startDate, LocalDate endDate)
-            throws MissingHackathonDataException, InvalidOrganizerException {
+    public String getEmail() {
+        return email;
+    }
 
-        this.role = new OrganizerRole(this);
-        Hackathon hackathon = new Hackathon(title, location, startDate, endDate, this);
-        this.registeredHackathon = hackathon;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Hackathon getHackathon() {
         return hackathon;
     }
 
-
-    public void registerToHackathon(Hackathon hackathon)
-            throws OrganizerSelfRegistrationException, AlreadyRegisteredToHackathonException, AlreadyOrganizingAnotherEventException {
-
-        if (this.role instanceof OrganizerRole) {
-            if (this.registeredHackathon != null && this.registeredHackathon.equals(hackathon)) {
-                throw new OrganizerSelfRegistrationException();
-            }
-            throw new AlreadyOrganizingAnotherEventException();
-        }
-
-        hackathon.addParticipant(this);
-
-        this.registeredHackathon = hackathon;
-        this.role = new ParticipantRole(this);
+    public void setHackathon(Hackathon hackathon) {
+        this.hackathon = hackathon;
     }
 }

@@ -1,100 +1,36 @@
 package controller;
 
-import exceptions.*;
-import model.*;
-import java.time.LocalDate;
+import model.User;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class Controller {
-    private User currentUser;
-    private HashMap<String, User> users; // L'HashMap permette di creare un collegamento univoco tra Stringa (username) e Oggetto (User)
-    private ArrayList<Hackathon> hackathons;
+    // Attributi
+    User currentUser;
 
+    List<User> users;
+
+    // Costruttore
     public Controller() {
-        this.users = new HashMap<>();
-        this.hackathons = new ArrayList<>();
+        users = new ArrayList<>();
     }
 
-    public void registerUser(String username, String email, String password)
-            throws EmptyFieldException, EmailAlreadyInUseException, UsernameAlreadyTakenException {
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            throw new EmptyFieldException();
-        }
+    // Metodi pubblici
+    public void registerUser(String username, String email, String password) throws Exception {
+        User newUser = new User(username, email, password);
 
-        if (users.containsKey(username.toLowerCase())) {
-            throw new UsernameAlreadyTakenException();
-        }
+        if (users.contains(newUser)) throw new Exception();
 
-        for (User u : users.values()) {
-            if (u.getEmail().equalsIgnoreCase(email)) {
-                throw new EmailAlreadyInUseException();
+        users.add(newUser);
+    }
+
+    public void loginUser(String username, String password) {
+        for (User u : users) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                currentUser = u;
             }
         }
-
-        users.put(username.toLowerCase(), new User(username, email, password));
-    }
-
-
-    public void loginUser(String username, String password)
-            throws EmptyFieldException, IncorrectPasswordException, UserNotFoundException {
-
-        if (username.isEmpty() || password.isEmpty()) {
-            throw new EmptyFieldException();
-        }
-
-        User user = users.get(username.toLowerCase());
-
-        if (user == null) {
-            throw new UserNotFoundException();
-        }
-
-        if (!user.getPassword().equals(password)) {
-            throw new IncorrectPasswordException();
-        }
-
-        this.currentUser = user;
-    }
-
-
-    public void logoutUser() {
-        this.currentUser = null;
-    }
-
-    public void assignRoleToCurrentUser(String role) {
-        switch (role.toLowerCase()) {
-            case "participant":
-                currentUser.setRole(new ParticipantRole(currentUser));
-                break;
-            case "organizer":
-                currentUser.setRole(new OrganizerRole(currentUser));
-                break;
-            case "judge":
-                currentUser.setRole(new JudgeRole(currentUser));
-                break;
-            default:
-                throw new IllegalArgumentException("Role not recognized.");
-        }
-    }
-
-
-    public void addHackathonToList(Hackathon hackathon) {
-        hackathons.add(hackathon);
-    }
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    public User getUserByUsername(String username) {
-        return users.get(username);
-    }
-
-    public ArrayList<Hackathon> getHackathons() {
-        return hackathons;
-    }
-
-    public ArrayList<User> getUsers() {
-        return new ArrayList<>(users.values());
     }
 }

@@ -26,30 +26,27 @@ public class AuthFrame extends JFrame {
         setResizable(false);
         setContentPane(rootPanel);
 
+        customizeComponents();
         setupCardPanel();
-        setupStyle();
+    }
+
+    private void customizeComponents() {
+        sidePanel.setBackground(NIGHT_BLUE);
+        hackathonIoPanel.setBackground(NIGHT_BLUE);
+        hackathonIoLabel.setForeground(Color.WHITE);
     }
 
     public void setupCardPanel() {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
 
-        // Add login panel
         LoginCardPanel loginPanel = new LoginCardPanel(cardPanel, controller);
         cardPanel.add(loginPanel.getRootPanel(), "login");
 
-        // Add registration panel
         RegistrationCardPanel registrationPanel = new RegistrationCardPanel(cardPanel, controller);
         cardPanel.add(registrationPanel.getRootPanel(), "register");
 
-        // Show login by default
         cardLayout.show(cardPanel, "login");
-    }
-
-    private void setupStyle() {
-        sidePanel.setBackground(NIGHT_BLUE);
-        hackathonIoPanel.setBackground(NIGHT_BLUE);
-        hackathonIoLabel.setForeground(Color.WHITE);
     }
 
     public JPanel getRootPanel() {
