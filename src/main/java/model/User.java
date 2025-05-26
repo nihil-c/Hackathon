@@ -14,7 +14,7 @@ public class User {
     // Costruttore
     public User(String username, String email, String password) throws Exception {
         // Eccezioni
-        if (username == null || email == null || password == null) throw new Exception();
+        if (username == null || email == null || password == null) throw new NullPointerException();
         if (username.isBlank() || email.isBlank() || password.isBlank()) throw new BlankFieldException();
 
         // Assegnazioni

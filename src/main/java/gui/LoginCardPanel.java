@@ -1,6 +1,8 @@
 package gui;
 
 import controller.Controller;
+import exceptions.BlankFieldException;
+import exceptions.UserNotFoundException;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -14,7 +16,7 @@ public class LoginCardPanel {
     private JPanel cardPanel;
     private JPasswordField passwordField;
     private JTextField usernameField;
-    private JPanel roundedLoginPanel;
+    private JPanel rLoginPanel;
     private JLabel usernameLabel;
     private JLabel passwordLabel;
     private JLabel loginLabel;
@@ -29,42 +31,88 @@ public class LoginCardPanel {
         this.controller = controller;
 
         customizeComponents();
+        setupDontHaveAnAccountLabelListener();
     }
 
-    public void customizeComponents() {
+    private void customizeComponents() {
         welcomeLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
         usernameLabel.setForeground(Color.GRAY);
-        passwordField.setForeground(Color.GRAY);
+        passwordLabel.setForeground(Color.GRAY);
+
+        rLoginPanel.setBackground(UIColors.NIGHT_BLUE);
         loginLabel.setForeground(Color.WHITE);
-        roundedLoginPanel.setBackground(UIColors.NIGHT_BLUE);
+
+        dontHaveAnAccountLabel.setForeground(UIColors.HYPERLINK_BLUE);
+        dontHaveAnAccountLabel.setText("<html><u>Don't have an account? Register!</u></html>");
     }
 
     private void createUIComponents() {
-        roundedLoginPanel = new RoundedPanel();
+        rLoginPanel = new RoundedPanel();
 
-        setupLoginPanelListener();
+        setupRLoginPanelListener();
     }
 
-    public void setupLoginPanelListener() {
-        roundedLoginPanel.addMouseListener(new MouseAdapter() {
+    private void setupRLoginPanelListener() {
+        rLoginPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        rLoginPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                handleLogin();
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                roundedLoginPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                roundedLoginPanel.setBackground(UIColors.CARMINE_RED);
+                rLoginPanel.setBackground(UIColors.CARMINE_RED);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                roundedLoginPanel.setCursor(Cursor.getDefaultCursor());
-                roundedLoginPanel.setBackground(UIColors.NIGHT_BLUE);
+                rLoginPanel.setBackground(UIColors.NIGHT_BLUE);
             }
         });
+    }
+
+    private void handleLogin() {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+
+        try {
+            controller.loginUser(username, password);
+            callMainFrame();
+        } catch (BlankFieldException | UserNotFoundException ex) {
+            showErrorDialog(ex.getMessage());
+        }
+    }
+
+    private void callMainFrame() {
+        SwingUtilities.invokeLater(() -> {
+            new MainFrame(controller).setVisible(true);
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(rootPanel);
+            if (frame != null) frame.dispose();
+        });
+    }
+
+    private void setupDontHaveAnAccountLabelListener() {
+        dontHaveAnAccountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        dontHaveAnAccountLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                CardLayout layout = (CardLayout) cardPanel.getLayout();
+                layout.show(cardPanel, "register");
+            }
+        });
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(
+                rootPanel,
+                message,
+                "Login Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     public JPanel getRootPanel() {

@@ -1,5 +1,8 @@
 package controller;
 
+import exceptions.AlreadyRegisteredUserException;
+import exceptions.BlankFieldException;
+import exceptions.UserNotFoundException;
 import model.User;
 
 import java.util.ArrayList;
@@ -21,16 +24,23 @@ public class Controller {
     public void registerUser(String username, String email, String password) throws Exception {
         User newUser = new User(username, email, password);
 
-        if (users.contains(newUser)) throw new Exception();
+        if (users.contains(newUser)) throw new AlreadyRegisteredUserException();
 
         users.add(newUser);
     }
 
-    public void loginUser(String username, String password) {
+    public void loginUser(String username, String password)
+            throws BlankFieldException, UserNotFoundException {
+        if (username == null || password == null) throw new NullPointerException();
+        if (username.isBlank() || password.isBlank()) throw new BlankFieldException();
+
         for (User u : users) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 currentUser = u;
+                return;
             }
         }
+
+        throw new UserNotFoundException();
     }
 }
