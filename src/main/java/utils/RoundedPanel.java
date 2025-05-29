@@ -6,7 +6,7 @@ import java.awt.*;
 public class RoundedPanel extends JPanel {
     private final int cornerRadius;
     private Color borderColor = null;
-    private int borderThickness = 1;
+    private int borderThickness = 2;
 
     public RoundedPanel() {
         this(20);

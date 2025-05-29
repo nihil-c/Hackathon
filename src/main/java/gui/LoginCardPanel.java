@@ -26,6 +26,7 @@ public class LoginCardPanel {
 
     private final Controller controller;
 
+    // Costruttore
     public LoginCardPanel(final JPanel cardPanel, final Controller controller) {
         this.cardPanel = cardPanel;
         this.controller = controller;
@@ -34,6 +35,7 @@ public class LoginCardPanel {
         setupDontHaveAnAccountLabelListener();
     }
 
+    // Metodi privati
     private void customizeComponents() {
         welcomeLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
@@ -108,13 +110,14 @@ public class LoginCardPanel {
 
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
-                rootPanel,
+                null,
                 message,
                 "Login Error",
                 JOptionPane.ERROR_MESSAGE
         );
     }
 
+    // Getter & Setter
     public JPanel getRootPanel() {
         return rootPanel;
     }

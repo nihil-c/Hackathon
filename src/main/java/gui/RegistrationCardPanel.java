@@ -1,6 +1,10 @@
 package gui;
 
 import controller.Controller;
+import exceptions.AlreadyTakenEmailException;
+import exceptions.AlreadyTakenUsernameException;
+import exceptions.BlankFieldException;
+import exceptions.PasswordsDoNotMatchException;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -49,7 +53,8 @@ public class RegistrationCardPanel {
         errorLabel.setForeground(UIColors.CARMINE_RED);
 
         rBackPanel.setBackground(Color.WHITE);
-        backLabel.setForeground(Color.WHITE);
+        ((RoundedPanel) rBackPanel).setBorderColor(UIColors.NIGHT_BLUE);
+        backLabel.setForeground(UIColors.NIGHT_BLUE);
 
         rConfirmPanel.setBackground(UIColors.NIGHT_BLUE);
         confirmLabel.setForeground(Color.WHITE);
@@ -60,7 +65,7 @@ public class RegistrationCardPanel {
         rConfirmPanel = new RoundedPanel();
 
         setupRBackPanelListener();
-        //setupRConfirmPanelListener();
+        setupRConfirmPanelListener();
     }
 
     private void setupRBackPanelListener() {
@@ -69,19 +74,89 @@ public class RegistrationCardPanel {
         rBackPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                CardLayout layout = (CardLayout) cardPanel.getLayout();
+                layout.show(cardPanel, "login");
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                rBackPanel.setBackground(UIColors.CARMINE_RED);
+                rBackPanel.setBackground(UIColors.LIGHT_GRAY);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                rBackPanel.setBackground(UIColors.NIGHT_BLUE);
+                rBackPanel.setBackground(Color.WHITE);
             }
         });
+    }
+
+    private void setupRConfirmPanelListener() {
+        rConfirmPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        rConfirmPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleRegistration();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                rConfirmPanel.setBackground(UIColors.CARMINE_RED);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                rConfirmPanel.setBackground(UIColors.NIGHT_BLUE);
+            }
+        });
+    }
+
+    private  void handleRegistration() {
+        String username = usernameField.getText();
+        String email = emailField.getText();
+        String password = new String(passwordField.getPassword());
+        String confirmPassword = new String(confirmPasswordField.getPassword());
+
+        try {
+            checkPasswords(password, confirmPassword);
+            controller.registerUser(username, email, password);
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Your account has been successfully registered!",
+                    "Registration Completed",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            usernameField.setText("");
+            emailField.setText("");
+            passwordField.setText("");
+            confirmPasswordField.setText("");
+
+            CardLayout layout = (CardLayout) cardPanel.getLayout();
+            layout.show(cardPanel, "login");
+        } catch (PasswordsDoNotMatchException ex) {
+            errorLabel.setVisible(true);
+        } catch (BlankFieldException | AlreadyTakenUsernameException | AlreadyTakenEmailException ex) {
+            showErrorDialog(ex.getMessage());
+        }
+    }
+
+    private void checkPasswords(String password, String confirmPassword) throws PasswordsDoNotMatchException {
+        if (!password.equals(confirmPassword)) {
+            throw new PasswordsDoNotMatchException();
+        } else {
+            errorLabel.setVisible(false);
+        }
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                "Login Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     public JPanel getRootPanel() {
