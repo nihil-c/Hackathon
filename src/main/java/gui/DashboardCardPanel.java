@@ -37,6 +37,20 @@ public class DashboardCardPanel {
     }
 
     // Metodi privati
+    private void customizeComponents() {
+        dashboardLabel.setForeground(UIColors.NIGHT_BLUE);
+        welcomeLabel.setForeground(UIColors.CARMINE_RED);
+        welcomeLabel.setText("Welcome, @" + controller.getCurrentUser().getUsername() + "!");
+        emailLabel.setForeground(Color.GRAY);
+        emailLabel.setText("E-mail: " + controller.getCurrentUser().getEmail());
+        openEventsLabel.setForeground(UIColors.CARMINE_RED);
+        rAddPanel.setBackground(UIColors.NIGHT_BLUE);
+        addLabel.setForeground(Color.WHITE);
+        infoLabel.setForeground(Color.GRAY);
+
+        SwingUtilities.invokeLater(() -> scrollPanel.getVerticalScrollBar().setValue(0));
+    }
+
     private void setupScrollPanel() {
         scrollPanel.setBorder(null);
         scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
@@ -58,18 +72,6 @@ public class DashboardCardPanel {
                 eventListPanel.add(Box.createVerticalStrut(15), 1);
             }
         }
-    }
-
-    private void customizeComponents() {
-        dashboardLabel.setForeground(UIColors.NIGHT_BLUE);
-        welcomeLabel.setForeground(UIColors.CARMINE_RED);
-        welcomeLabel.setText("Welcome, @" + controller.getCurrentUser().getUsername() + "!");
-        emailLabel.setForeground(Color.GRAY);
-        emailLabel.setText("E-mail: " + controller.getCurrentUser().getEmail());
-        openEventsLabel.setForeground(UIColors.CARMINE_RED);
-        rAddPanel.setBackground(UIColors.NIGHT_BLUE);
-        addLabel.setForeground(Color.WHITE);
-        infoLabel.setForeground(Color.GRAY);
     }
 
     private RoundedPanel createEventCard(Hackathon hackathon) {

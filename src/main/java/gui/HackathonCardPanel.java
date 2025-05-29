@@ -127,10 +127,13 @@ public class HackathonCardPanel {
 
         rankingLabel.setForeground(UIColors.CARMINE_RED);
         rankingInfoLabel.setForeground(Color.GRAY);
-        setupRankingListPanel();
 
         rPublishPanel.setBackground(UIColors.NIGHT_BLUE);
         publishLabel.setForeground(Color.WHITE);
+
+        setupRankingListPanel();
+
+        SwingUtilities.invokeLater(() -> scrollPanel.getVerticalScrollBar().setValue(0));
     }
 
     private void setupScrollPanel() {
