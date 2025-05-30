@@ -62,7 +62,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="icons/Dashboard Icon.png"/>
+                          <icon value="icons/dashboard.png"/>
                           <text value="Dashboard"/>
                         </properties>
                       </component>
@@ -86,7 +86,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="icons/Hackathon Icon.png"/>
+                          <icon value="icons/hackathon.png"/>
                           <text value="Hackathon"/>
                         </properties>
                       </component>
@@ -105,7 +105,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="icons/Team Icon.png"/>
+                          <icon value="icons/team.png"/>
                           <text value="Team"/>
                         </properties>
                       </component>
@@ -124,7 +124,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="icons/Manage Icon.png"/>
+                          <icon value="icons/manage.png"/>
                           <text value="Manage"/>
                         </properties>
                       </component>
@@ -143,7 +143,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="icons/Logout Icon.png"/>
+                          <icon value="icons/logout.png"/>
                           <text value="Logout"/>
                         </properties>
                       </component>

@@ -43,6 +43,7 @@ public class DashboardCardPanel {
         welcomeLabel.setText("Welcome, @" + controller.getCurrentUser().getUsername() + "!");
         emailLabel.setForeground(Color.GRAY);
         emailLabel.setText("E-mail: " + controller.getCurrentUser().getEmail());
+        
         openEventsLabel.setForeground(UIColors.CARMINE_RED);
         rAddPanel.setBackground(UIColors.NIGHT_BLUE);
         addLabel.setForeground(Color.WHITE);

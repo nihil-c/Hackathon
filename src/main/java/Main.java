@@ -12,6 +12,7 @@ public class Main {
             throws Exception {
         Controller controller = new Controller();
         controller.registerUser("asd", "asd@example.com", "asd");
+        controller.registerUser("qwe", "qwe@example.com", "qwe");
         //User asdUser = controller.getUserByUsername("asd");
         //Hackathon hackathon = new Hackathon("Hackathon", "Italia", LocalDate.now(), LocalDate.now().plusDays(5), 100, 5, new User("cacca", "cacca", "cacca"));
         //asdUser.setHackathon(hackathon);
