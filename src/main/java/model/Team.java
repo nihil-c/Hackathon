@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Team {
+    Hackathon hackathon;
     String teamName;
     String accessCode;
     int score;
@@ -14,9 +15,19 @@ public class Team {
     List<User> members;
     List<Upload> uploads;
 
-    public Team(String teamName) {
+    public Team(Hackathon hackathon, String teamName) {
+        this.hackathon = hackathon;
         this.teamName = teamName;
         this.accessCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.score = -1;
+        this.members = new ArrayList<>();
+        this.uploads = new ArrayList<>();
+    }
+
+    public Team(Hackathon hackathon, String teamName, String accessCode) {
+        this.hackathon = hackathon;
+        this.teamName = teamName;
+        this.accessCode = accessCode;
         this.score = -1;
         this.members = new ArrayList<>();
         this.uploads = new ArrayList<>();
@@ -74,5 +85,10 @@ public class Team {
 
     public void setUploads(List<Upload> uploads) {
         this.uploads = uploads;
+    }
+
+    @Override
+    public String toString() {
+        return teamName;
     }
 }

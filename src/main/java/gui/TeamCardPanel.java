@@ -1,6 +1,8 @@
 package gui;
 
 import controller.Controller;
+import exceptions.AlreadyPartOfATeamException;
+import exceptions.BlankFieldException;
 import model.ParticipantRole;
 import model.Role;
 import model.User;
@@ -11,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.UUID;
 
 public class TeamCardPanel {
     private JPanel rootPanel;
@@ -41,7 +44,7 @@ public class TeamCardPanel {
 
     private void customizeComponents() {
         teamLabel.setForeground(UIColors.NIGHT_BLUE);
-        infoLabel.setForeground(Color.GRAY);
+        infoLabel.setForeground(UIColors.CARMINE_RED);
 
         rCreateTeamPanel.setBackground(UIColors.NIGHT_BLUE);
         createTeamLabel.setForeground(Color.WHITE);
@@ -113,13 +116,10 @@ public class TeamCardPanel {
 
     private RoundedPanel createMemberCard(User user) {
         RoundedPanel card = new RoundedPanel();
-
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
+        card.setBorderColor(UIColors.LIGHT_GRAY);
         card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        card.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        card.setPreferredSize(new Dimension(0, 50));
 
         JLabel nameLabel = new JLabel(user.getUsername());
         JLabel emailLabel = new JLabel(user.getEmail());
@@ -149,7 +149,56 @@ public class TeamCardPanel {
         rCreateTeamPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                User currentUser = controller.getCurrentUser();
+                Role currentUserRole = currentUser.getRole();
+
+                if (((ParticipantRole) currentUserRole).getTeam() == null){
+                    String accessCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+
+                    JTextField teamNameField = new JTextField();
+                    JTextField accessCodeField = new JTextField(accessCode);
+                    accessCodeField.setForeground(Color.GRAY);
+                    accessCodeField.setEditable(false);
+
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                    panel.add(new JLabel("Team name:")).setForeground(Color.GRAY);
+                    panel.add(teamNameField);
+                    panel.add(Box.createVerticalStrut(10));
+
+                    panel.add(new JLabel("Access code:")).setForeground(Color.GRAY);
+                    panel.add(accessCodeField);
+                    panel.add(Box.createVerticalStrut(10));
+
+                    panel.add(new JLabel("Share this code with your friends!")).setForeground(UIColors.CARMINE_RED);
+
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            panel,
+                            "Create Team",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE
+                    );
+
+                    if (result == JOptionPane.OK_OPTION) {
+                        try {
+                            String teamName = teamNameField.getText().trim();
+
+                            if (teamName.isBlank()) throw new BlankFieldException();
+
+                            if (currentUserRole instanceof ParticipantRole participantRole) {
+                                participantRole.createTeam(currentUser, currentUser.getHackathon(), teamName, accessCode);
+                                setupInfoLabels();
+                                updateMembersListPanel();
+                            }
+                        } catch (BlankFieldException | AlreadyPartOfATeamException ex) {
+                            showErrorDialog(ex.getMessage());
+                        }
+                    }
+                } else {
+                    showErrorDialog("You already have a team.");
+                }
             }
 
             @Override
@@ -206,6 +255,15 @@ public class TeamCardPanel {
                 rAddPanel.setBackground(UIColors.NIGHT_BLUE);
             }
         });
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     public JPanel getRootPanel() {

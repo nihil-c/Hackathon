@@ -61,18 +61,18 @@ public class MainFrame extends JFrame {
         JPanel dashboardPanel = new DashboardCardPanel(controller).getRootPanel();
         JPanel hackathonPanel = new HackathonCardPanel(controller).getRootPanel();
         JPanel teamPanel = new TeamCardPanel(controller).getRootPanel();
-        // JPanel managePanel = new ManageCardPanel(controller).getRootPanel();
+        JPanel managePanel = new ManageCardPanel(controller).getRootPanel();
 
         cardMap.put("dashboard", dashboardPanel);
         cardMap.put("hackathon", hackathonPanel);
         cardMap.put("team", teamPanel);
-        // cardMap.put("manage", managePanel);
+        cardMap.put("manage", managePanel);
 
         // Aggiunge i pannelli al cardPanel con il nome chiave
         cardPanel.add(dashboardPanel, "dashboard");
         cardPanel.add(hackathonPanel, "hackathon");
         cardPanel.add(teamPanel, "team");
-        // cardPanel.add(managePanel, "manage");
+        cardPanel.add(managePanel, "manage");
 
         cardLayout.show(cardPanel, "dashboard");
     }
@@ -132,7 +132,7 @@ public class MainFrame extends JFrame {
         rDashboardPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                cardLayout.show(cardPanel, "dashboard");
+                refreshCard("dashboard", new DashboardCardPanel(controller).getRootPanel());
             }
 
             @Override
@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
         rManagePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                refreshCard("manage", new ManageCardPanel(controller).getRootPanel());
             }
 
             @Override

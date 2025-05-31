@@ -61,4 +61,9 @@ public class User {
     public void setHackathon(Hackathon hackathon) {
         this.hackathon = hackathon;
     }
+
+    @Override
+    public String toString() {
+        return "@" + username;
+    }
 }
