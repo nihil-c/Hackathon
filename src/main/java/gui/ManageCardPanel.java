@@ -9,15 +9,11 @@ import utils.UIColors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 public class ManageCardPanel {
     private JPanel rootPanel;
     private JList participantsList;
     private JList teamsList;
-    private JTable uploadsTable;
     private JLabel manageLabel;
     private JLabel infoLabel;
     private JLabel participantsLabel;
@@ -27,6 +23,10 @@ public class ManageCardPanel {
     private JLabel teamsAndUploadsLabel;
     private JLabel teamsAndUploadsInfoLabel;
     private JScrollPane scrollPanel;
+    private JScrollPane participantsListScrollPanel;
+    private JPanel rParticipantListPanel;
+    private JScrollPane teamsListScrollPanel;
+    private JPanel rTeamsListPanel;
 
     private final Controller controller;
 
@@ -60,14 +60,21 @@ public class ManageCardPanel {
     private void setupParticipantsSection() {
         participantsLabel.setForeground(UIColors.CARMINE_RED);
         participantsInfoLabel.setForeground(Color.GRAY);
+        rParticipantListPanel.setBackground(Color.WHITE);
+        participantsListScrollPanel.setBorder(null);
+        participantsListScrollPanel.setBackground(null);
         participantsList.setBorder(null);
+        participantsList.setBackground(null);
     }
 
     private void setupTeamsAndUploadsSection() {
         teamsAndUploadsLabel.setForeground(UIColors.CARMINE_RED);
         teamsAndUploadsInfoLabel.setForeground(Color.GRAY);
+        rTeamsListPanel.setBackground(Color.WHITE);
+        teamsListScrollPanel.setBorder(null);
+        teamsListScrollPanel.setBackground(null);
         teamsList.setBorder(null);
-        uploadsTable.setBorder(null);
+        teamsList.setBackground(null);
     }
 
     private void populateParticipantsList() {
@@ -98,6 +105,11 @@ public class ManageCardPanel {
 
             teamsList.setModel(listModel);
         }
+    }
+
+    private void createUIComponents() {
+        rParticipantListPanel = new RoundedPanel();
+        rTeamsListPanel = new RoundedPanel();
     }
 
     public JPanel getRootPanel() {
