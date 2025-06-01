@@ -18,8 +18,6 @@ public class ManageCardPanel {
     private JLabel infoLabel;
     private JLabel participantsLabel;
     private JLabel participantsInfoLabel;
-    private JPanel rSearchPanel;
-    private JLabel searchLabel;
     private JLabel teamsAndUploadsLabel;
     private JLabel teamsAndUploadsInfoLabel;
     private JScrollPane scrollPanel;
