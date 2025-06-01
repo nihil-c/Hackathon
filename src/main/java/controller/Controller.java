@@ -10,7 +10,6 @@ import java.util.List;
 public class Controller {
     // Attributi
     User currentUser;
-
     List<User> users;
     List<Hackathon> hackathons;
 
@@ -22,15 +21,15 @@ public class Controller {
 
     // Metodi pubblici
     public void registerUser(String username, String email, String password)
-            throws BlankFieldException, AlreadyTakenUsernameException, AlreadyTakenEmailException {
+            throws BlankFieldException, UsernameAlreadyTakenException, EmailAlreadyTakenException {
         if (username.isBlank() || email.isBlank() || password.isBlank()) throw new BlankFieldException();
 
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(username)) {
-                throw new AlreadyTakenUsernameException();
+                throw new UsernameAlreadyTakenException();
             }
             if (u.getEmail().equalsIgnoreCase(email)) {
-                throw new AlreadyTakenEmailException();
+                throw new EmailAlreadyTakenException();
             }
         }
 

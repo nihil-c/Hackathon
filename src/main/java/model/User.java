@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.BlankFieldException;
+
 public class User {
     // Attributi
     private String username;
@@ -10,9 +12,11 @@ public class User {
     private Hackathon hackathon;
 
     // Costruttore
-    public User(String username, String email, String password) throws NullPointerException {
+    public User(String username, String email, String password)
+            throws NullPointerException, BlankFieldException {
         // Eccezioni
         if (username == null || email == null || password == null) throw new NullPointerException();
+        if (username.isBlank() || email.isBlank() || password.isBlank()) throw new BlankFieldException();
 
         // Assegnazioni
         this.username = username;

@@ -1,8 +1,8 @@
 package gui;
 
 import controller.Controller;
-import exceptions.AlreadyTakenEmailException;
-import exceptions.AlreadyTakenUsernameException;
+import exceptions.EmailAlreadyTakenException;
+import exceptions.UsernameAlreadyTakenException;
 import exceptions.BlankFieldException;
 import exceptions.PasswordsDoNotMatchException;
 import utils.RoundedPanel;
@@ -137,7 +137,7 @@ public class RegistrationCardPanel {
             layout.show(cardPanel, "login");
         } catch (PasswordsDoNotMatchException ex) {
             errorLabel.setVisible(true);
-        } catch (BlankFieldException | AlreadyTakenUsernameException | AlreadyTakenEmailException ex) {
+        } catch (BlankFieldException | UsernameAlreadyTakenException | EmailAlreadyTakenException ex) {
             showErrorDialog(ex.getMessage());
         }
     }

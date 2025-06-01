@@ -1,8 +1,7 @@
 package gui;
 
 import controller.Controller;
-import model.DefaultRole;
-import model.ParticipantRole;
+import model.*;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -203,7 +202,13 @@ public class MainFrame extends JFrame {
         rManagePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                refreshCard("manage", new ManageCardPanel(controller).getRootPanel());
+                Role currentUserRole = controller.getCurrentUser().getRole();
+
+                if (currentUserRole instanceof OrganizerRole || currentUserRole instanceof JudgeRole) {
+                    refreshCard("manage", new ManageCardPanel(controller).getRootPanel());
+                } else {
+                    showErrorDialog("This tab is reserved to Organizers and Judges.");
+                }
             }
 
             @Override
