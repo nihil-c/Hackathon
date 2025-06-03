@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class Upload {
     private String title;
     private String url;
+    private User uploader;
     private LocalDate creationDate;
     private String feedback;
 
@@ -18,9 +19,10 @@ public class Upload {
      * @param title titolo dell'upload
      * @param url url del file caricato
      */
-    public Upload(String title, String url) {
+    public Upload(String title, String url, User uploader) {
         this.title = title;
         this.url = url;
+        this.uploader = uploader;
         this.creationDate = LocalDate.now();
         this.feedback = null;
     }
@@ -55,6 +57,22 @@ public class Upload {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    /**
+     * Restituisce l'utente che ha effettuato l'upload.
+     * @return uploader
+     */
+    public User getUploader() {
+        return uploader;
+    }
+
+    /**
+     * Imposta l'utente che ha effettuato l'upload.
+     * @param uploader nuovo uploader
+     */
+    public void setUploader(User uploader) {
+        this.uploader = uploader;
     }
 
     /**

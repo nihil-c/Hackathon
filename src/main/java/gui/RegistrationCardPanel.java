@@ -80,12 +80,14 @@ public class RegistrationCardPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                rBackPanel.setBackground(UIColors.LIGHT_GRAY);
+                ((RoundedPanel) rBackPanel).setBorderColor(UIColors.CARMINE_RED);
+                backLabel.setForeground(UIColors.CARMINE_RED);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                rBackPanel.setBackground(Color.WHITE);
+                ((RoundedPanel) rBackPanel).setBorderColor(UIColors.NIGHT_BLUE);
+                backLabel.setForeground(UIColors.NIGHT_BLUE);
             }
         });
     }

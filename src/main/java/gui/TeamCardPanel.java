@@ -5,7 +5,9 @@ import exceptions.AlreadyPartOfATeamException;
 import exceptions.BlankFieldException;
 import model.ParticipantRole;
 import model.Role;
+import model.Team;
 import model.User;
+import model.Upload;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -32,6 +34,7 @@ public class TeamCardPanel {
     private JLabel membersInfoLabel;
     private JPanel membersListPanel;
     private JPanel uploadsListPanel;
+    private JLabel accessCodeLabel;
 
     private final Controller controller;
 
@@ -45,6 +48,8 @@ public class TeamCardPanel {
     private void customizeComponents() {
         teamLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
+        accessCodeLabel.setForeground(Color.GRAY);
+        accessCodeLabel.setVisible(false);
 
         rCreateTeamPanel.setBackground(UIColors.NIGHT_BLUE);
         createTeamLabel.setForeground(Color.WHITE);
@@ -72,10 +77,13 @@ public class TeamCardPanel {
                 infoLabel.setText("You are currently part of the team: " + participantRole.getTeam().getTeamName());
                 membersInfoLabel.setVisible(false);
                 uploadsInfoLabel.setVisible(false);
+                String accessCode = participantRole.getTeam().getAccessCode();
+                updateAccessCodeLabel(accessCode);
             } else {
                 infoLabel.setText("You are currently not part of a team.");
                 membersInfoLabel.setVisible(true);
                 uploadsInfoLabel.setVisible(true);
+                accessCodeLabel.setVisible(false);
             }
         }
     }
@@ -87,6 +95,7 @@ public class TeamCardPanel {
         scrollPanel.getVerticalScrollBar().setUnitIncrement(10);
 
         setupMembersListPanel();
+        setupUploadsListPanel();
     }
 
     private void setupMembersListPanel() {
@@ -133,6 +142,58 @@ public class TeamCardPanel {
         return card;
     }
 
+    private void setupUploadsListPanel() {
+        uploadsListPanel.setLayout(new BoxLayout(uploadsListPanel, BoxLayout.Y_AXIS));
+        updateUploadsListPanel();
+    }
+
+    public void updateUploadsListPanel() {
+        User currentUser = controller.getCurrentUser();
+        Role currentUserRole = currentUser.getRole();
+
+        uploadsListPanel.removeAll();
+
+        if (currentUserRole instanceof ParticipantRole participantRole) {
+            if (participantRole.getTeam() != null) {
+                for (Upload upload : participantRole.getTeam().getUploads()) {
+                    RoundedPanel card = createUploadCard(upload);
+                    uploadsListPanel.add(card, 0);
+                    uploadsListPanel.add(Box.createVerticalStrut(15), 1);
+                }
+            }
+        }
+
+        uploadsListPanel.revalidate();
+        uploadsListPanel.repaint();
+    }
+
+    private RoundedPanel createUploadCard(Upload upload) {
+        RoundedPanel card = new RoundedPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Color.WHITE);
+        card.setBorderColor(UIColors.LIGHT_GRAY);
+        card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel titleLabel = new JLabel(upload.getTitle());
+        JLabel urlLabel = new JLabel("URL: " + upload.getUrl());
+        JLabel dateLabel = new JLabel("Date: " + upload.getCreationDate());
+        String author = upload.getUploader() != null ? upload.getUploader().getUsername() : "Unknown";
+        JLabel authorLabel = new JLabel("Uploader: @" + author);
+
+        titleLabel.setForeground(UIColors.CARMINE_RED);
+        titleLabel.setFont(new Font(null, Font.BOLD, 14));
+        urlLabel.setForeground(Color.GRAY);
+        dateLabel.setForeground(Color.GRAY);
+        authorLabel.setForeground(Color.GRAY);
+
+        card.add(titleLabel);
+        card.add(urlLabel);
+        card.add(dateLabel);
+        card.add(authorLabel);
+
+        return card;
+    }
+
     private void createUIComponents() {
         rCreateTeamPanel = new RoundedPanel();
         rJoinTeamPanel = new RoundedPanel();
@@ -163,15 +224,21 @@ public class TeamCardPanel {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-                    panel.add(new JLabel("Team name:")).setForeground(Color.GRAY);
+                    JLabel teamNameLabel = new JLabel("Team name");
+                    teamNameLabel.setForeground(Color.GRAY);
+                    panel.add(teamNameLabel);
                     panel.add(teamNameField);
                     panel.add(Box.createVerticalStrut(10));
 
-                    panel.add(new JLabel("Access code:")).setForeground(Color.GRAY);
+                    JLabel accessCodeLabel = new JLabel("Access code (auto-generated)");
+                    accessCodeLabel.setForeground(Color.GRAY);
+                    panel.add(accessCodeLabel);
                     panel.add(accessCodeField);
                     panel.add(Box.createVerticalStrut(10));
 
-                    panel.add(new JLabel("Share this code with your friends!")).setForeground(UIColors.CARMINE_RED);
+                    JLabel shareLabel = new JLabel("Share this code with your teammates.");
+                    shareLabel.setForeground(UIColors.CARMINE_RED);
+                    panel.add(shareLabel);
 
                     int result = JOptionPane.showConfirmDialog(
                             null,
@@ -187,17 +254,18 @@ public class TeamCardPanel {
 
                             if (teamName.isBlank()) throw new BlankFieldException();
 
-                            if (currentUserRole instanceof ParticipantRole participantRole) {
-                                participantRole.createTeam(currentUser, currentUser.getHackathon(), teamName, accessCode);
-                                setupInfoLabels();
-                                updateMembersListPanel();
-                            }
+                            ParticipantRole participantRole = (ParticipantRole) currentUserRole;
+                            participantRole.createTeam(currentUser, currentUser.getHackathon(), teamName, accessCode);
+                            setupInfoLabels();
+                            updateMembersListPanel();
+                            updateAccessCodeLabel(accessCode);
+                            showInfoDialog("Team created successfully!\nShare the access code with your teammates.");
                         } catch (BlankFieldException | AlreadyPartOfATeamException ex) {
                             showErrorDialog(ex.getMessage());
                         }
                     }
                 } else {
-                    showErrorDialog("You already have a team.");
+                    showErrorDialog("You are already part of a team.");
                 }
             }
 
@@ -219,7 +287,7 @@ public class TeamCardPanel {
         rJoinTeamPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                // TODO: Implementare la funzione di join team
             }
 
             @Override
@@ -231,7 +299,7 @@ public class TeamCardPanel {
             @Override
             public void mouseExited(MouseEvent e) {
                 ((RoundedPanel) rJoinTeamPanel).setBorderColor(UIColors.NIGHT_BLUE);
-                joinTeamLabel.setForeground(null);
+                joinTeamLabel.setForeground(UIColors.NIGHT_BLUE);
             }
         });
     }
@@ -242,7 +310,62 @@ public class TeamCardPanel {
         rAddPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
+                User currentUser = controller.getCurrentUser();
+                Role currentUserRole = currentUser.getRole();
+
+                if (!(currentUserRole instanceof ParticipantRole participantRole)) {
+                    showErrorDialog("Only participants can upload a project.");
+                    return;
+                }
+
+                if (participantRole.getTeam() == null) {
+                    showErrorDialog("You must be in a team to upload a project.");
+                    return;
+                }
+
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                JTextField titleField = new JTextField();
+                JTextField urlField = new JTextField();
+                JLabel titleLabel = new JLabel("Title:");
+                JLabel urlLabel = new JLabel("URL:");
+
+                titleLabel.setForeground(Color.GRAY);
+                titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                titleField.setAlignmentX(Component.LEFT_ALIGNMENT);
+                urlLabel.setForeground(Color.GRAY);
+                urlLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                urlField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                panel.add(titleLabel);
+                panel.add(titleField);
+                panel.add(Box.createVerticalStrut(10));
+                panel.add(urlLabel);
+                panel.add(urlField);
+                panel.add(Box.createVerticalStrut(10));
+
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        panel,
+                        "New Upload",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String title = titleField.getText().trim();
+                    String url = urlField.getText().trim();
+
+                    if (title.isBlank() || url.isBlank()) {
+                        showErrorDialog("Please fill in all fields.");
+                        return;
+                    }
+
+                    participantRole.upload(currentUser, title, url);
+                    updateUploadsListPanel();
+                    showInfoDialog("Upload successfully added!");
+                }
             }
 
             @Override
@@ -257,12 +380,26 @@ public class TeamCardPanel {
         });
     }
 
+    private void updateAccessCodeLabel(String accessCode) {
+        accessCodeLabel.setText("Access Code: " + accessCode);
+        accessCodeLabel.setVisible(true);
+    }
+
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
                 message,
                 "Error",
                 JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    private void showInfoDialog(String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
         );
     }
 

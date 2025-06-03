@@ -41,6 +41,20 @@ public class ParticipantRole implements Role {
     }
 
     /**
+     * Permette a un partecipante di effettuare un upload per il proprio team.
+     * @param user l'utente che effettua l'upload
+     * @param title titolo dell'upload
+     * @param url url del progetto caricato
+     */
+    public void upload(User user, String title, String url) {
+        if (team != null && team.getMembers().contains(user)) {
+            Upload upload = new Upload(title, url, user);
+            upload.setFeedback(null); // opzionale, feedback vuoto
+            team.addUpload(upload);
+        }
+    }
+
+    /**
      * Restituisce il team associato al partecipante.
      * @return team
      */
