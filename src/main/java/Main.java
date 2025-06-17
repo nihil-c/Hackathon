@@ -8,8 +8,7 @@ import model.User;
 import javax.swing.*;
 
 public class Main {
-    public static void main(String[] args)
-            throws Exception {
+    public static void main(String[] args) throws Exception {
         Controller controller = new Controller();
         controller.registerUser("asd", "asd@example.com", "asd");
         controller.registerUser("qwe", "qwe@example.com", "qwe");

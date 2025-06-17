@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.OrganizerRole;
 import model.ParticipantRole;
 import model.Team;
 import model.User;
@@ -9,6 +10,8 @@ import utils.UIColors;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ManageCardPanel {
     private JPanel rootPanel;
@@ -35,6 +38,7 @@ public class ManageCardPanel {
         customizeComponents();
         populateParticipantsList();
         populateTeamsList();
+        setupParticipantsListClickListener();
     }
 
     private void setupScrollPanel() {
@@ -103,6 +107,46 @@ public class ManageCardPanel {
 
             teamsList.setModel(listModel);
         }
+    }
+
+    private void setupParticipantsListClickListener() {
+        participantsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                User currentUser = controller.getCurrentUser();
+
+                if (!(currentUser.getRole() instanceof OrganizerRole)) {
+                    return;
+                }
+
+                int index = participantsList.locationToIndex(e.getPoint());
+
+                if (index >= 0) { // Verifica che l'indice è valido
+                    User selectedUser = (User) participantsList.getModel().getElementAt(index);
+                    if (selectedUser.getRole() instanceof ParticipantRole pr) {
+                        pr = (ParticipantRole) selectedUser.getRole();
+                        if (pr.getTeam() != null) {
+                            JOptionPane.showMessageDialog(null, "You cannot promote a participant who is part of a team.", "Promotion not allowed", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
+                        int result = JOptionPane.showConfirmDialog(
+                                null,
+                                "Do you want to promote '" + selectedUser.getUsername() + "' to Judge?",
+                                "Promote to Judge",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE
+                        );
+
+                        if (result == JOptionPane.YES_OPTION) {
+                            selectedUser.setRole(new model.JudgeRole());
+                            populateParticipantsList();
+                            JOptionPane.showMessageDialog(null, "User promoted to Judge!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void createUIComponents() {
