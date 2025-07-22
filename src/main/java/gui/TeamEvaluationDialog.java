@@ -35,7 +35,7 @@ public class TeamEvaluationDialog extends JDialog {
      * @param team team da valutare
      */
     public TeamEvaluationDialog(Team team) {
-m        setTitle("Team Evaluation");
+        setTitle("Team Evaluation");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
