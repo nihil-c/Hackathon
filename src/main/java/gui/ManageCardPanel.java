@@ -1,10 +1,7 @@
 package gui;
 
 import controller.Controller;
-import model.OrganizerRole;
-import model.ParticipantRole;
-import model.Team;
-import model.User;
+import model.*;
 import utils.RoundedPanel;
 import utils.UIColors;
 
@@ -13,6 +10,13 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Pannello per la gestione dei team e dei partecipanti nell'applicazione Hackathon.IO.
+ * <p>
+ * Permette agli organizzatori e ai giudici di visualizzare, promuovere e valutare i team e i partecipanti.
+ * I giudici possono assegnare punteggi e feedback ai team tramite una finestra dedicata.
+ * </p>
+ */
 public class ManageCardPanel {
     private JPanel rootPanel;
     private JList participantsList;
@@ -31,6 +35,10 @@ public class ManageCardPanel {
 
     private final Controller controller;
 
+    /**
+     * Costruttore del pannello di gestione.
+     * @param controller controller principale dell'applicazione
+     */
     public ManageCardPanel(Controller controller) {
         this.controller = controller;
 
@@ -39,8 +47,12 @@ public class ManageCardPanel {
         populateParticipantsList();
         populateTeamsList();
         setupParticipantsListClickListener();
+        setupTeamsAndUploadsListClickListener();
     }
 
+    /**
+     * Imposta lo scroll e il layout del pannello principale.
+     */
     private void setupScrollPanel() {
         scrollPanel.setBorder(null);
         scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
@@ -48,17 +60,26 @@ public class ManageCardPanel {
         scrollPanel.getVerticalScrollBar().setUnitIncrement(10);
     }
 
+    /**
+     * Personalizza i componenti grafici e imposta i colori.
+     */
     private void customizeComponents() {
         setupHeader();
         setupParticipantsSection();
         setupTeamsAndUploadsSection();
     }
 
+    /**
+     * Imposta le proprietà grafiche della sezione header.
+     */
     private void setupHeader() {
         manageLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
     }
 
+    /**
+     * Imposta le proprietà grafiche della lista dei partecipanti.
+     */
     private void setupParticipantsSection() {
         participantsLabel.setForeground(UIColors.CARMINE_RED);
         participantsInfoLabel.setForeground(Color.GRAY);
@@ -69,6 +90,9 @@ public class ManageCardPanel {
         participantsList.setBackground(null);
     }
 
+    /**
+     * Imposta le proprietà grafiche della sezione team e upload.
+     */
     private void setupTeamsAndUploadsSection() {
         teamsAndUploadsLabel.setForeground(UIColors.CARMINE_RED);
         teamsAndUploadsInfoLabel.setForeground(Color.GRAY);
@@ -79,6 +103,9 @@ public class ManageCardPanel {
         teamsList.setBackground(null);
     }
 
+    /**
+     * Popola la lista dei partecipanti.
+     */
     private void populateParticipantsList() {
         User currentUser = controller.getCurrentUser();
 
@@ -95,6 +122,9 @@ public class ManageCardPanel {
         }
     }
 
+    /**
+     * Popola la lista dei team.
+     */
     private void populateTeamsList() {
         User currentUser = controller.getCurrentUser();
 
@@ -109,6 +139,9 @@ public class ManageCardPanel {
         }
     }
 
+    /**
+     * Imposta il listener per la lista dei partecipanti (promozione a giudice).
+     */
     private void setupParticipantsListClickListener() {
         participantsList.addMouseListener(new MouseAdapter() {
             @Override
@@ -149,11 +182,41 @@ public class ManageCardPanel {
         });
     }
 
+    /**
+     * Imposta il listener per la lista dei team: apre la finestra di valutazione se l'utente è giudice.
+     */
+    private void setupTeamsAndUploadsListClickListener() {
+        teamsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = teamsList.locationToIndex(e.getPoint());
+
+                if (index >= 0) {
+                    Team selectedTeam = (Team) teamsList.getModel().getElementAt(index);
+                    User currentUser = controller.getCurrentUser();
+                    if (currentUser.getRole() instanceof JudgeRole) {
+                        TeamEvaluationDialog dialogPanel = new TeamEvaluationDialog(selectedTeam);
+                        dialogPanel.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "You do not have permission to evaluate teams.", "Permission Denied", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Inizializza i componenti grafici custom.
+     */
     private void createUIComponents() {
         rParticipantListPanel = new RoundedPanel();
         rTeamsListPanel = new RoundedPanel();
     }
 
+    /**
+     * Restituisce il pannello principale.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

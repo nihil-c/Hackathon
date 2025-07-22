@@ -7,6 +7,10 @@ import java.awt.*;
 
 import static utils.UIColors.*;
 
+/**
+ * Finestra di autenticazione per l'accesso e la registrazione.
+ */
+
 public class AuthFrame extends JFrame {
     private JPanel rootPanel;
     private JPanel hackathonIoPanel;
@@ -14,9 +18,12 @@ public class AuthFrame extends JFrame {
     private JPanel sidePanel;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-
     private final Controller controller;
 
+    /**
+     * Costruttore della finestra di autenticazione.
+     * @param controller controller principale dell'applicazione
+     */
     public AuthFrame(Controller controller) {
         this.controller = controller;
 
@@ -31,13 +38,19 @@ public class AuthFrame extends JFrame {
         setupCardPanel();
     }
 
+    /**
+     * Personalizza i colori dei pannelli e del titolo.
+     */
     private void customizeComponents() {
         sidePanel.setBackground(NIGHT_BLUE);
         hackathonIoPanel.setBackground(NIGHT_BLUE);
         hackathonIoLabel.setForeground(Color.WHITE);
     }
 
-    public void setupCardPanel() {
+    /**
+     * Inizializza il pannello centrale con i pannelli di login e registrazione.
+     */
+    private void setupCardPanel() {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
 
@@ -50,6 +63,10 @@ public class AuthFrame extends JFrame {
         cardLayout.show(cardPanel, "login");
     }
 
+    /**
+     * Restituisce il pannello principale della finestra.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

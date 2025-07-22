@@ -12,8 +12,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 
+/**
+ * Pannello della dashboard principale dell'applicazione Hackathon.IO.
+ * <p>
+ * Questa classe gestisce la visualizzazione degli eventi disponibili, la registrazione agli hackathon,
+ * e la creazione di nuovi eventi. Mostra le informazioni dell'utente e permette l'interazione tramite
+ * pannelli e card grafiche personalizzate.
+ * </p>
+ */
 public class DashboardCardPanel {
-    // Attributi
     private JPanel rootPanel;
     private JLabel dashboardLabel;
     private JLabel welcomeLabel;
@@ -27,7 +34,10 @@ public class DashboardCardPanel {
 
     private final Controller controller;
 
-    // Costruttore
+    /**
+     * Costruttore del pannello dashboard.
+     * @param controller controller principale dell'applicazione
+     */
     public DashboardCardPanel(Controller controller) {
         this.controller = controller;
 
@@ -36,7 +46,9 @@ public class DashboardCardPanel {
         populateEventListPanel();
     }
 
-    // Metodi privati
+    /**
+     * Personalizza i colori e i testi dei componenti della dashboard.
+     */
     private void customizeComponents() {
         dashboardLabel.setForeground(UIColors.NIGHT_BLUE);
         welcomeLabel.setForeground(UIColors.CARMINE_RED);
@@ -52,6 +64,9 @@ public class DashboardCardPanel {
         SwingUtilities.invokeLater(() -> scrollPanel.getVerticalScrollBar().setValue(0));
     }
 
+    /**
+     * Imposta lo scroll e il layout del pannello lista eventi.
+     */
     private void setupScrollPanel() {
         scrollPanel.setBorder(null);
         scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
@@ -62,6 +77,9 @@ public class DashboardCardPanel {
         eventListPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
     }
 
+    /**
+     * Popola il pannello con la lista degli eventi disponibili.
+     */
     private void populateEventListPanel() {
         if (controller.getHackathons().isEmpty()) {
             infoLabel.setVisible(true);
@@ -75,6 +93,11 @@ public class DashboardCardPanel {
         }
     }
 
+    /**
+     * Crea una card grafica per un singolo evento hackathon.
+     * @param hackathon evento hackathon da visualizzare
+     * @return pannello grafico dell'evento
+     */
     private RoundedPanel createEventCard(Hackathon hackathon) {
         RoundedPanel card = new RoundedPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -116,6 +139,11 @@ public class DashboardCardPanel {
         return card;
     }
 
+    /**
+     * Rende interattiva la card di un evento, permettendo la registrazione.
+     * @param card pannello grafico dell'evento
+     * @param hackathon evento hackathon associato
+     */
     private void makeCardInteractive(RoundedPanel card, Hackathon hackathon) {
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -161,12 +189,18 @@ public class DashboardCardPanel {
         });
     }
 
+    /**
+     * Inizializza i componenti grafici custom.
+     */
     private void createUIComponents() {
         rAddPanel = new RoundedPanel();
 
         setupAddPanelListener();
     }
 
+    /**
+     * Imposta il listener per il pannello di aggiunta evento.
+     */
     private void setupAddPanelListener() {
         rAddPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -277,6 +311,9 @@ public class DashboardCardPanel {
         });
     }
 
+    /**
+     * Aggiorna la lista degli eventi visualizzati.
+     */
     private void updateEventListPanel() {
         eventListPanel.removeAll();
         populateEventListPanel();
@@ -284,6 +321,10 @@ public class DashboardCardPanel {
         eventListPanel.repaint();
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -293,7 +334,10 @@ public class DashboardCardPanel {
         );
     }
 
-    // Getter & Setter
+    /**
+     * Restituisce il pannello principale della dashboard.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

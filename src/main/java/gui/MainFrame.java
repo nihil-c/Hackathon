@@ -12,8 +12,14 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Finestra principale dell'applicazione Hackathon.IO.
+ * <p>
+ * Gestisce la visualizzazione dei diversi pannelli tramite CardLayout e permette la navigazione tra dashboard,
+ * hackathon, team, gestione e logout. Inizializza il menu e i pannelli principali dell'interfaccia utente.
+ * </p>
+ */
 public class MainFrame extends JFrame {
-    // Attributi
     private JPanel rootPanel;
     private JPanel sidebarPanel;
     private JPanel cardPanel;
@@ -37,7 +43,10 @@ public class MainFrame extends JFrame {
     private final Map<String, JPanel> cardMap = new HashMap<>();
     private CardLayout cardLayout;
 
-    // Costruttore
+    /**
+     * Costruttore della finestra principale.
+     * @param controller controller principale dell'applicazione
+     */
     public MainFrame(Controller controller) {
         this.controller = controller;
 
@@ -51,7 +60,9 @@ public class MainFrame extends JFrame {
         customizeComponents();
     }
 
-    // Metodi privati
+    /**
+     * Inizializza il pannello centrale con i vari pannelli dell'applicazione e imposta il CardLayout.
+     */
     private void setupCardPanel() {
         cardLayout = new CardLayout();
         cardPanel.setLayout(cardLayout);
@@ -76,6 +87,9 @@ public class MainFrame extends JFrame {
         cardLayout.show(cardPanel, "dashboard");
     }
 
+    /**
+     * Personalizza i componenti grafici della sidebar e dei pannelli menu.
+     */
     private void customizeComponents() {
         sidebarPanel.setBackground(UIColors.NIGHT_BLUE);
         menuLabel.setForeground(Color.WHITE);
@@ -103,6 +117,12 @@ public class MainFrame extends JFrame {
         scaleLabelIcon(logoutLabel, 20, 20);
     }
 
+    /**
+     * Ridimensiona l'icona di una JLabel alle dimensioni specificate.
+     * @param label JLabel da modificare
+     * @param width larghezza desiderata
+     * @param height altezza desiderata
+     */
     private void scaleLabelIcon(JLabel label, int width, int height) {
         Icon icon = label.getIcon();
         if (icon instanceof ImageIcon imageIcon) {
@@ -111,6 +131,9 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Inizializza i componenti grafici custom e imposta i listener dei pannelli menu.
+     */
     private void createUIComponents() {
         rDashboardPanel = new RoundedPanel();
         rHackathonPanel = new RoundedPanel();
@@ -125,6 +148,9 @@ public class MainFrame extends JFrame {
         setupRLogoutPanelListener();
     }
 
+    /**
+     * Imposta il listener per il pannello Dashboard.
+     */
     private void setupRDashboardPanelListener() {
         rDashboardPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -146,6 +172,9 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Imposta il listener per il pannello Hackathon.
+     */
     private void setupRHackathonPanelListener() {
         rHackathonPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -171,6 +200,9 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Imposta il listener per il pannello Team.
+     */
     private void setupRTeamPanelListener() {
         rTeamPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -196,6 +228,9 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Imposta il listener per il pannello Manage.
+     */
     private void setupRManagePanelListener() {
         rManagePanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -223,6 +258,9 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Imposta il listener per il pannello Logout.
+     */
     private void setupRLogoutPanelListener() {
         rLogoutPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -248,6 +286,11 @@ public class MainFrame extends JFrame {
         });
     }
 
+    /**
+     * Aggiorna il pannello visualizzato nel CardLayout con uno nuovo.
+     * @param name nome del pannello da aggiornare
+     * @param newPanel nuovo pannello da visualizzare
+     */
     private void refreshCard(String name, JPanel newPanel) {
         JPanel oldPanel = cardMap.get(name);
 
@@ -262,6 +305,10 @@ public class MainFrame extends JFrame {
         cardPanel.repaint();
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -271,7 +318,10 @@ public class MainFrame extends JFrame {
         );
     }
 
-    // Getter & Setter
+    /**
+     * Restituisce il pannello principale della finestra.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

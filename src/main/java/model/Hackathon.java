@@ -26,7 +26,6 @@ public class Hackathon {
 
     List<User> participants;
     List<Team> teams;
-    List<Team> ranking;
 
     /**
      * Costruisce un nuovo hackathon con i parametri principali.
@@ -62,7 +61,6 @@ public class Hackathon {
 
         this.participants = new ArrayList<>();
         this.teams = new ArrayList<>();
-        this.ranking = new ArrayList<>();
     }
 
     /**
@@ -292,21 +290,5 @@ public class Hackathon {
      */
     public void setTeams(List<Team> teams) {
         this.teams = teams;
-    }
-
-    /**
-     * Restituisce la classifica dei team.
-     * @return classifica
-     */
-    public List<Team> getRanking() {
-        return ranking;
-    }
-
-    /**
-     * Imposta la classifica dei team.
-     * @param ranking nuova classifica
-     */
-    public void setRanking(List<Team> ranking) {
-        this.ranking = ranking;
     }
 }

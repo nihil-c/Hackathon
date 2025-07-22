@@ -8,16 +8,27 @@ public class RoundedPanel extends JPanel {
     private Color borderColor = null;
     private int borderThickness = 2;
 
+    /**
+     * Costruttore di default. Crea un pannello con raggio angoli pari a 20.
+     */
     public RoundedPanel() {
         this(20);
     }
 
+    /**
+     * Costruttore che permette di specificare il raggio degli angoli.
+     * @param radius raggio degli angoli arrotondati
+     */
     public RoundedPanel(int radius) {
         super();
         this.cornerRadius = radius;
         setOpaque(false);
     }
 
+    /**
+     * Disegna il pannello con angoli arrotondati e bordo opzionale.
+     * @param g contesto grafico
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -41,11 +52,19 @@ public class RoundedPanel extends JPanel {
         g2.dispose();
     }
 
+    /**
+     * Imposta il colore del bordo del pannello.
+     * @param borderColor colore del bordo
+     */
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         repaint();
     }
 
+    /**
+     * Imposta lo spessore del bordo del pannello.
+     * @param thickness spessore del bordo
+     */
     public void setBorderThickness(int thickness) {
         this.borderThickness = thickness;
         repaint();

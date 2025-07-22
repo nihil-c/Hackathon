@@ -17,6 +17,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.UUID;
 
+/**
+ * Pannello grafico per la gestione e visualizzazione del team nell'applicazione Hackathon.IO.
+ * <p>
+ * Permette ai partecipanti di creare o unirsi a un team, visualizzare i membri e gli upload,
+ * e interagire con le funzionalità di upload e feedback. Gestisce la logica di interazione utente-team.
+ * </p>
+ */
 public class TeamCardPanel {
     private JPanel rootPanel;
     private JLabel teamLabel;
@@ -38,6 +45,10 @@ public class TeamCardPanel {
 
     private final Controller controller;
 
+    /**
+     * Costruttore del pannello team.
+     * @param controller controller principale dell'applicazione
+     */
     public TeamCardPanel(Controller controller) {
         this.controller = controller;
 
@@ -45,6 +56,9 @@ public class TeamCardPanel {
         setupScrollPanel();
     }
 
+    /**
+     * Personalizza i componenti grafici del pannello team.
+     */
     private void customizeComponents() {
         teamLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
@@ -68,6 +82,9 @@ public class TeamCardPanel {
         setupInfoLabels();
     }
 
+    /**
+     * Aggiorna le etichette informative del pannello team.
+     */
     private void setupInfoLabels() {
         User currentUser = controller.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
@@ -88,6 +105,9 @@ public class TeamCardPanel {
         }
     }
 
+    /**
+     * Imposta lo scroll e il layout dei pannelli membri e upload.
+     */
     private void setupScrollPanel() {
         scrollPanel.setBorder(null);
         scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
@@ -98,11 +118,17 @@ public class TeamCardPanel {
         setupUploadsListPanel();
     }
 
+    /**
+     * Imposta il layout e aggiorna la lista dei membri del team.
+     */
     private void setupMembersListPanel() {
         membersListPanel.setLayout(new BoxLayout(membersListPanel, BoxLayout.Y_AXIS));
         updateMembersListPanel();
     }
 
+    /**
+     * Aggiorna la lista dei membri del team.
+     */
     public void updateMembersListPanel() {
         User currentUser = controller.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
@@ -123,6 +149,11 @@ public class TeamCardPanel {
         membersListPanel.repaint();
     }
 
+    /**
+     * Crea una card grafica per un membro del team.
+     * @param user utente membro del team
+     * @return pannello grafico del membro
+     */
     private RoundedPanel createMemberCard(User user) {
         RoundedPanel card = new RoundedPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -142,11 +173,17 @@ public class TeamCardPanel {
         return card;
     }
 
+    /**
+     * Imposta il layout e aggiorna la lista degli upload del team.
+     */
     private void setupUploadsListPanel() {
         uploadsListPanel.setLayout(new BoxLayout(uploadsListPanel, BoxLayout.Y_AXIS));
         updateUploadsListPanel();
     }
 
+    /**
+     * Aggiorna la lista degli upload del team.
+     */
     public void updateUploadsListPanel() {
         User currentUser = controller.getCurrentUser();
         Role currentUserRole = currentUser.getRole();
@@ -167,6 +204,11 @@ public class TeamCardPanel {
         uploadsListPanel.repaint();
     }
 
+    /**
+     * Crea una card grafica per un upload del team.
+     * @param upload upload da visualizzare
+     * @return pannello grafico dell'upload
+     */
     private RoundedPanel createUploadCard(Upload upload) {
         RoundedPanel card = new RoundedPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -184,16 +226,49 @@ public class TeamCardPanel {
         titleLabel.setFont(new Font(null, Font.BOLD, 14));
         urlLabel.setForeground(Color.GRAY);
         dateLabel.setForeground(Color.GRAY);
-        authorLabel.setForeground(Color.GRAY);
 
         card.add(titleLabel);
         card.add(urlLabel);
         card.add(dateLabel);
         card.add(authorLabel);
 
+        makeCardInteractive(card, upload);
+
         return card;
     }
 
+    /**
+     * Rende interattiva la card di un upload, mostrando eventuale feedback.
+     * @param card pannello grafico dell'upload
+     * @param upload upload associato
+     */
+    private void makeCardInteractive(RoundedPanel card, Upload upload) {
+        card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (upload.getFeedback() == null) {
+                    showInfoDialog("Feedback", "This upload has no feedback yet.");
+                } else {
+                    showInfoDialog("Feedback", upload.getFeedback());
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.setBackground(UIColors.LIGHT_GRAY);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.setBackground(Color.WHITE);
+            }
+        });
+    }
+
+    /**
+     * Inizializza i componenti grafici custom e i listener.
+     */
     private void createUIComponents() {
         rCreateTeamPanel = new RoundedPanel();
         rJoinTeamPanel = new RoundedPanel();
@@ -204,6 +279,9 @@ public class TeamCardPanel {
         setupRAddPanelListener();
     }
 
+    /**
+     * Imposta il listener per la creazione di un nuovo team.
+     */
     private void setupRCreateTeamPanelListener() {
         rCreateTeamPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -259,7 +337,7 @@ public class TeamCardPanel {
                             setupInfoLabels();
                             updateMembersListPanel();
                             updateAccessCodeLabel(accessCode);
-                            showInfoDialog("Team created successfully!\nShare the access code with your teammates.");
+                            showInfoDialog("Success", "Team created successfully!\nShare the access code with your teammates.");
                         } catch (BlankFieldException | AlreadyPartOfATeamException ex) {
                             showErrorDialog(ex.getMessage());
                         }
@@ -281,13 +359,83 @@ public class TeamCardPanel {
         });
     }
 
+    /**
+     * Imposta il listener per unirsi a un team esistente.
+     */
     private void setupRJoinTeamPanelListener() {
         rJoinTeamPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         rJoinTeamPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                // TODO: Implementare la funzione di join team
+                User currentUser = controller.getCurrentUser();
+                Role currentUserRole = currentUser.getRole();
+
+                if (((ParticipantRole) currentUserRole).getTeam() != null) {
+                    showErrorDialog("You are already part of a team.");
+                    return;
+                }
+
+                JTextField teamNameField = new JTextField();
+                JTextField accessCodeField = new JTextField();
+
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+                JLabel teamNameLabel = new JLabel("Team name");
+                teamNameLabel.setForeground(Color.GRAY);
+                panel.add(teamNameLabel);
+                panel.add(teamNameField);
+                panel.add(Box.createVerticalStrut(10));
+
+                JLabel accessCodeLabel = new JLabel("Access code");
+                accessCodeLabel.setForeground(Color.GRAY);
+                panel.add(accessCodeLabel);
+                panel.add(accessCodeField);
+                panel.add(Box.createVerticalStrut(10));
+
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        panel,
+                        "Join Team",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (result == JOptionPane.OK_OPTION) {
+                    String teamName = teamNameField.getText().trim();
+                    String accessCode = accessCodeField.getText().trim();
+
+                    if (teamName.isBlank() || accessCode.isBlank()) {
+                        showErrorDialog("Please fill in all fields.");
+                        return;
+                    }
+
+                    var hackathon = currentUser.getHackathon();
+                    Team foundTeam = null;
+                    for (Team t : hackathon.getTeams()) {
+                        if (t.getTeamName().equals(teamName) && t.getAccessCode().equals(accessCode)) {
+                            foundTeam = t;
+                            break;
+                        }
+                    }
+
+                    if (foundTeam == null) {
+                        showErrorDialog("Team not found or access code is incorrect.");
+                        return;
+                    }
+
+                    try {
+                        foundTeam.addMember(currentUser);
+                        ((ParticipantRole) currentUserRole).setTeam(foundTeam);
+                        setupInfoLabels();
+                        updateMembersListPanel();
+                        updateUploadsListPanel();
+                        showInfoDialog("Success", "You have successfully joined the team!");
+                    } catch (Exception ex) {
+                        showErrorDialog("Unable to join the team: " + ex.getMessage());
+                    }
+                }
             }
 
             @Override
@@ -304,6 +452,9 @@ public class TeamCardPanel {
         });
     }
 
+    /**
+     * Imposta il listener per aggiungere un nuovo upload.
+     */
     private void setupRAddPanelListener() {
         rAddPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -364,7 +515,7 @@ public class TeamCardPanel {
 
                     participantRole.upload(currentUser, title, url);
                     updateUploadsListPanel();
-                    showInfoDialog("Upload successfully added!");
+                    showInfoDialog("Success", "Upload successfully added!");
                 }
             }
 
@@ -380,11 +531,19 @@ public class TeamCardPanel {
         });
     }
 
+    /**
+     * Aggiorna la label del codice di accesso del team.
+     * @param accessCode codice di accesso
+     */
     private void updateAccessCodeLabel(String accessCode) {
         accessCodeLabel.setText("Access Code: " + accessCode);
         accessCodeLabel.setVisible(true);
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -394,15 +553,24 @@ public class TeamCardPanel {
         );
     }
 
-    private void showInfoDialog(String message) {
+    /**
+     * Mostra una finestra informativa con titolo e messaggio.
+     * @param title titolo della finestra
+     * @param message messaggio da visualizzare
+     */
+    private void showInfoDialog(String title, String message) {
         JOptionPane.showMessageDialog(
                 null,
                 message,
-                "Success",
+                title,
                 JOptionPane.INFORMATION_MESSAGE
         );
     }
 
+    /**
+     * Restituisce il pannello principale del team.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

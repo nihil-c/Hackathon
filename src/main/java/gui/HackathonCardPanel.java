@@ -15,6 +15,14 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Pannello grafico per la visualizzazione e gestione delle informazioni di un hackathon.
+ * <p>
+ * Mostra i dettagli dell'evento, la classifica dei team, il problema proposto e permette
+ * l'interazione tramite pulsanti e pannelli personalizzati. Consente ai giudici di pubblicare la classifica
+ * e agli utenti di visualizzare le informazioni principali dell'hackathon.
+ * </p>
+ */
 public class HackathonCardPanel {
     private JPanel rootPanel;
     private JLabel hackathonLabel;
@@ -65,12 +73,19 @@ public class HackathonCardPanel {
 
     private final Controller controller;
 
+    /**
+     * Costruttore del pannello hackathon.
+     * @param controller controller principale dell'applicazione
+     */
     public HackathonCardPanel(Controller controller) {
         this.controller = controller;
 
         customizeComponents();
     }
 
+    /**
+     * Personalizza i componenti grafici e imposta i colori.
+     */
     private void customizeComponents() {
         User currentUser = controller.getCurrentUser();
         Hackathon currentHackathon = currentUser.getHackathon();
@@ -89,15 +104,6 @@ public class HackathonCardPanel {
         rMaxParticipantsPanel.setBackground(UIColors.LIGHT_GRAY);
         rMaxTeamSizePanel.setBackground(UIColors.LIGHT_GRAY);
         rOrganizerPanel.setBackground(UIColors.LIGHT_GRAY);
-
-        //titleLabel.setForeground(Color.GRAY);
-        //locationLabel.setForeground(Color.GRAY);
-        //startDateLabel.setForeground(Color.GRAY);
-        //endDateLabel.setForeground(Color.GRAY);
-        //deadlineLabel.setForeground(Color.GRAY);
-        //maxParticipantsLabel.setForeground(Color.GRAY);
-        //maxTeamSizeLabel.setForeground(Color.GRAY);
-        //organizerLabel.setForeground(Color.GRAY);
 
         rTitleContentPanel.setBackground(Color.WHITE);
         rLocationContentPanel.setBackground(Color.WHITE);
@@ -136,6 +142,9 @@ public class HackathonCardPanel {
         SwingUtilities.invokeLater(() -> scrollPanel.getVerticalScrollBar().setValue(0));
     }
 
+    /**
+     * Imposta lo scroll e il layout del pannello principale.
+     */
     private void setupScrollPanel() {
         scrollPanel.setBorder(null);
         scrollPanel.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
@@ -143,11 +152,20 @@ public class HackathonCardPanel {
         scrollPanel.getVerticalScrollBar().setUnitIncrement(10);
     }
 
+    /**
+     * Imposta il layout e il bordo del pannello classifica.
+     */
     private void setupRankingListPanel() {
         rankingListPanel.setLayout(new BoxLayout(rankingListPanel, BoxLayout.Y_AXIS));
         rankingListPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
     }
 
+    /**
+     * Crea una card grafica per la classifica di un team.
+     * @param rankingNumber posizione in classifica
+     * @param teamName nome del team
+     * @return pannello grafico della card classifica
+     */
     private RoundedPanel createRankingCard(int rankingNumber, String teamName) {
         RoundedPanel card = new RoundedPanel();
 
@@ -174,6 +192,10 @@ public class HackathonCardPanel {
         return card;
     }
 
+    /**
+     * Aggiorna le informazioni dell'hackathon visualizzate.
+     * @param hackathon hackathon da visualizzare
+     */
     private void addHackathonInfo(Hackathon hackathon) {
         titleContentLabel.setText(hackathon.getTitle());
         locationContentLabel.setText(hackathon.getLocation());
@@ -185,6 +207,9 @@ public class HackathonCardPanel {
         organizerContentLabel.setText("@" + hackathon.getOrganizer().getUsername());
     }
 
+    /**
+     * Inizializza i componenti grafici custom.
+     */
     private void createUIComponents() {
         rTitlePanel = new RoundedPanel();
         rLocationPanel = new RoundedPanel();
@@ -211,6 +236,9 @@ public class HackathonCardPanel {
         setupRPublishPanel();
     }
 
+    /**
+     * Imposta il listener per la modifica del problema.
+     */
     private void setupREditPanel() {
         rEditPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -256,40 +284,44 @@ public class HackathonCardPanel {
         });
     }
 
+    /**
+     * Imposta il listener per la pubblicazione della classifica.
+     */
     private void setupRPublishPanel() {
         rPublishPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         rPublishPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!(controller.getCurrentUser().getRole() instanceof JudgeRole)) {
-                    showErrorDialog("Only a Judge can perform this action.");
-                } else {
-                    if (controller.getCurrentUser().getHackathon().getRanking() == null) {
-                        rankingInfoLabel.setText("The ranking is currently unavailable.");
-                    } else {
-                        List<Team> ranking = controller.getCurrentUser().getHackathon().getRanking();
-                        rankingListPanel.removeAll();
+                // Solo i giudici possono pubblicare la classifica
+                User currentUser = controller.getCurrentUser();
 
-                        int maxTeams = Math.min(10, ranking.size());
-                        for (int i = 0; i < maxTeams; i++) {
-                            Team team = ranking.get(i);
-                            RoundedPanel rankingCard = createRankingCard(i + 1, team.getTeamName());
-                            rankingListPanel.add(rankingCard);
-                            rankingListPanel.add(Box.createVerticalStrut(10));
-                        }
-
-                        rankingListPanel.revalidate();
-                        rankingListPanel.repaint();
-                    }
+                if (!(currentUser.getRole() instanceof JudgeRole)) {
+                    JOptionPane.showMessageDialog(null, "Only a Judge can publish the ranking.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+
+                Hackathon hackathon = currentUser.getHackathon();
+
+                List<Team> teams = new ArrayList<>(hackathon.getTeams());
+
+                teams.sort((t1, t2) -> Integer.compare(t2.getScore(), t1.getScore()));
+                rankingListPanel.removeAll();
+
+                for (int i = 0; i < teams.size(); i++) {
+                    model.Team team = teams.get(i);
+                    RoundedPanel rankingCard = createRankingCard(i + 1, team.getTeamName());
+                    rankingListPanel.add(rankingCard);
+                    rankingListPanel.add(Box.createVerticalStrut(10));
+                }
+
+                rankingListPanel.revalidate();
+                rankingListPanel.repaint();
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 rPublishPanel.setBackground(UIColors.CARMINE_RED);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 rPublishPanel.setBackground(UIColors.NIGHT_BLUE);
@@ -297,6 +329,10 @@ public class HackathonCardPanel {
         });
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -306,6 +342,10 @@ public class HackathonCardPanel {
         );
     }
 
+    /**
+     * Restituisce il pannello principale.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

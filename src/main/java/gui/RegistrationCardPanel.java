@@ -13,8 +13,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Pannello grafico per la registrazione di un nuovo utente nell'applicazione Hackathon.IO.
+ * <p>
+ * Permette la creazione di un account, la gestione dei campi di input e la navigazione verso il pannello di login.
+ * Gestisce la visualizzazione di errori e la logica di registrazione tramite il controller.
+ * </p>
+ */
 public class RegistrationCardPanel {
-    // Attributi
     private JPanel rootPanel;
     private JPasswordField confirmPasswordField;
     private JPasswordField passwordField;
@@ -34,7 +40,11 @@ public class RegistrationCardPanel {
     private final Controller controller;
     private final JPanel cardPanel;
 
-    // Costruttore
+    /**
+     * Costruttore del pannello di registrazione.
+     * @param cardPanel pannello principale che gestisce il CardLayout
+     * @param controller controller principale dell'applicazione
+     */
     public RegistrationCardPanel(JPanel cardPanel, Controller controller) {
         this.cardPanel = cardPanel;
         this.controller = controller;
@@ -42,6 +52,9 @@ public class RegistrationCardPanel {
         customizeComponents();
     }
 
+    /**
+     * Personalizza i componenti grafici del pannello di registrazione.
+     */
     private void customizeComponents() {
         registerYourAccountLabel.setForeground(UIColors.NIGHT_BLUE);
         usernameLabel.setForeground(Color.GRAY);
@@ -60,6 +73,9 @@ public class RegistrationCardPanel {
         confirmLabel.setForeground(Color.WHITE);
     }
 
+    /**
+     * Inizializza i componenti grafici custom e i listener.
+     */
     private void createUIComponents() {
         rBackPanel = new RoundedPanel();
         rConfirmPanel = new RoundedPanel();
@@ -68,9 +84,10 @@ public class RegistrationCardPanel {
         setupRConfirmPanelListener();
     }
 
+    /**
+     * Imposta il listener per il pannello di ritorno al login.
+     */
     private void setupRBackPanelListener() {
-        rBackPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
         rBackPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -92,6 +109,9 @@ public class RegistrationCardPanel {
         });
     }
 
+    /**
+     * Imposta il listener per il pannello di conferma registrazione.
+     */
     private void setupRConfirmPanelListener() {
         rConfirmPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -113,7 +133,10 @@ public class RegistrationCardPanel {
         });
     }
 
-    private  void handleRegistration() {
+    /**
+     * Gestisce la logica di registrazione dell'utente.
+     */
+    private void handleRegistration() {
         String username = usernameField.getText();
         String email = emailField.getText();
         String password = new String(passwordField.getPassword());
@@ -144,6 +167,12 @@ public class RegistrationCardPanel {
         }
     }
 
+    /**
+     * Verifica che le password coincidano, altrimenti lancia un'eccezione.
+     * @param password password inserita
+     * @param confirmPassword conferma password
+     * @throws PasswordsDoNotMatchException se le password non coincidono
+     */
     private void checkPasswords(String password, String confirmPassword) throws PasswordsDoNotMatchException {
         if (!password.equals(confirmPassword)) {
             throw new PasswordsDoNotMatchException();
@@ -152,6 +181,10 @@ public class RegistrationCardPanel {
         }
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -161,6 +194,10 @@ public class RegistrationCardPanel {
         );
     }
 
+    /**
+     * Restituisce il pannello principale della registrazione.
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }

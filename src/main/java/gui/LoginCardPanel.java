@@ -11,6 +11,13 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Pannello grafico per la gestione del login utente nell'applicazione Hackathon.IO.
+ * <p>
+ * Permette l'autenticazione dell'utente e la navigazione verso la registrazione.
+ * Gestisce la visualizzazione di errori e il passaggio tra i pannelli tramite CardLayout.
+ * </p>
+ */
 public class LoginCardPanel {
     private JPanel rootPanel;
     private JPanel cardPanel;
@@ -26,7 +33,12 @@ public class LoginCardPanel {
 
     private final Controller controller;
 
-    // Costruttore
+    /**
+     * Costruttore del pannello di login.
+     *
+     * @param cardPanel pannello principale che gestisce il CardLayout
+     * @param controller controller principale dell'applicazione
+     */
     public LoginCardPanel(final JPanel cardPanel, final Controller controller) {
         this.cardPanel = cardPanel;
         this.controller = controller;
@@ -35,7 +47,9 @@ public class LoginCardPanel {
         setupDontHaveAnAccountLabelListener();
     }
 
-    // Metodi privati
+    /**
+     * Personalizza i componenti grafici del pannello di login.
+     */
     private void customizeComponents() {
         welcomeLabel.setForeground(UIColors.NIGHT_BLUE);
         infoLabel.setForeground(UIColors.CARMINE_RED);
@@ -49,12 +63,18 @@ public class LoginCardPanel {
         dontHaveAnAccountLabel.setText("<html><u>Don't have an account? Register!</u></html>");
     }
 
+    /**
+     * Inizializza i componenti grafici custom.
+     */
     private void createUIComponents() {
         rLoginPanel = new RoundedPanel();
 
         setupRLoginPanelListener();
     }
 
+    /**
+     * Imposta il listener per il pannello di login.
+     */
     private void setupRLoginPanelListener() {
         rLoginPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -76,6 +96,9 @@ public class LoginCardPanel {
         });
     }
 
+    /**
+     * Gestisce la logica di autenticazione dell'utente.
+     */
     private void handleLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
@@ -88,6 +111,9 @@ public class LoginCardPanel {
         }
     }
 
+    /**
+     * Avvia la finestra principale dopo il login.
+     */
     private void callMainFrame() {
         SwingUtilities.invokeLater(() -> {
             new MainFrame(controller).setVisible(true);
@@ -96,6 +122,9 @@ public class LoginCardPanel {
         });
     }
 
+    /**
+     * Listener per il passaggio al pannello di registrazione.
+     */
     private void setupDontHaveAnAccountLabelListener() {
         dontHaveAnAccountLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -108,6 +137,11 @@ public class LoginCardPanel {
         });
     }
 
+    /**
+     * Mostra una finestra di errore con il messaggio specificato.
+     *
+     * @param message messaggio di errore da visualizzare
+     */
     private void showErrorDialog(String message) {
         JOptionPane.showMessageDialog(
                 null,
@@ -117,7 +151,11 @@ public class LoginCardPanel {
         );
     }
 
-    // Getter & Setter
+    /**
+     * Restituisce il pannello principale del login.
+     *
+     * @return rootPanel
+     */
     public JPanel getRootPanel() {
         return rootPanel;
     }
